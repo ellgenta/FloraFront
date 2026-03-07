@@ -1,11 +1,11 @@
 import { User, ShoppingCart } from "lucide-react";
-import flowerLogo from "../src/assets/flower.png.png";
+
 
 function Header() {
   return (
     <header className="header">
       <div className="header__logo">
-        <img src={flowerLogo} alt="FloraShop logo" className="header__logo-image" />
+        <img src="/flower.png" alt="FloraShop logo" className="header__logo-image" />
         <h1 className="header__logo-text">FloraShop</h1>
       </div>
 
