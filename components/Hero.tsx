@@ -1,26 +1,47 @@
-import React from "react";
-
-type HeroProps = {
-  title?: string;
-  description?: string;
-  onCtaClick?: () => void;
-};
-
-export default function Hero({
-  title = "Modern Furniture Store",
-  description = "Browse curated furniture and decor. Clean design, fair prices, fast delivery.",
-  onCtaClick,
-}: HeroProps) {
+function Hero() {
   return (
     <section className="hero">
-      <h1 className="hero__title">{title}</h1>
-      <p className="hero__desc">{description}</p>
+      <div className="hero__content">
+        <div className="hero__badge">Fresh flowers for your cozy space</div>
 
-      <div className="hero__actions">
-        <button className="hero__btn" type="button" onClick={onCtaClick}>
-          Go to catalog
-        </button>
+        <h2 className="hero__title">
+          Bring floral magic
+          <br />
+          into your home
+        </h2>
+
+        <p className="hero__text">
+          Discover delicate flowers, elegant bouquets, and beautiful plants
+          that make every room feel softer, fresher, and more alive.
+        </p>
+
+        <div className="hero__buttons">
+          <button className="hero__button hero__button--primary">
+            Shop now
+          </button>
+          <button className="hero__button hero__button--secondary">
+            View catalog
+          </button>
+        </div>
+
+        <div className="hero__features">
+          <div className="hero__feature">Fresh daily</div>
+          <div className="hero__feature">Soft floral style</div>
+          <div className="hero__feature">Fast delivery</div>
+        </div>
+      </div>
+
+      <div className="hero__visual">
+        <div className="hero__image-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=80"
+            alt="Pink flowers in vase"
+            className="hero__image"
+          />
+        </div>
       </div>
     </section>
   );
 }
+
+export default Hero;

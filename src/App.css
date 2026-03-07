@@ -82,3 +82,242 @@
 .header__signin:hover {
   opacity: 0.8;
 }
+
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.hero {
+  width: 100%;
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48px 64px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at top left, rgba(232, 168, 200, 0.25), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(168, 207, 162, 0.28), transparent 30%),
+    linear-gradient(135deg, #fcf7f8 0%, #f8f2f5 45%, #f4f8f1 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  background: rgba(216, 196, 241, 0.18);
+  border-radius: 50%;
+  top: -80px;
+  right: 140px;
+  filter: blur(10px);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  background: rgba(232, 168, 200, 0.14);
+  border-radius: 50%;
+  bottom: -60px;
+  left: 80px;
+  filter: blur(10px);
+}
+
+.hero__content {
+  width: 50%;
+  max-width: 580px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero__badge {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background-color: #f4dce8;
+  color: #8f5f78;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.hero__title {
+  margin: 0 0 22px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 64px;
+  line-height: 1.05;
+  color: #3e2d35;
+  font-weight: 700;
+}
+
+.hero__text {
+  margin: 0 0 32px;
+  max-width: 520px;
+  font-size: 20px;
+  line-height: 1.7;
+  color: #7a6871;
+}
+
+.hero__buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 34px;
+}
+
+.hero__button {
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.hero__button--primary {
+  border: none;
+  background: linear-gradient(135deg, #d997b7 0%, #c98ee1 100%);
+  color: white;
+  box-shadow: 0 10px 24px rgba(201, 142, 225, 0.22);
+}
+
+.hero__button--primary:hover {
+  transform: translateY(-2px);
+}
+
+.hero__button--secondary {
+  border: 1.5px solid #d8bfd0;
+  background: rgba(255, 255, 255, 0.75);
+  color: #6f5865;
+}
+
+.hero__button--secondary:hover {
+  background: white;
+}
+
+.hero__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.hero__feature {
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(225, 202, 214, 0.9);
+  color: #6f6268;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.hero__visual {
+  width: 46%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero__image-wrap {
+  width: 520px;
+  height: 520px;
+  border-radius: 40px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 25px 60px rgba(111, 88, 101, 0.16);
+  position: relative;
+}
+
+.hero__image-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255, 240, 246, 0.18), rgba(255, 255, 255, 0));
+  z-index: 1;
+}
+
+.hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* адаптив */
+@media (max-width: 1100px) {
+  .hero {
+    padding: 40px 32px;
+    gap: 30px;
+  }
+
+  .hero__title {
+    font-size: 52px;
+  }
+
+  .hero__text {
+    font-size: 18px;
+  }
+
+  .hero__image-wrap {
+    width: 440px;
+    height: 440px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    padding: 40px 24px 56px;
+    min-height: auto;
+  }
+
+  .hero__content,
+  .hero__visual {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero__title {
+    font-size: 46px;
+  }
+
+  .hero__image-wrap {
+    width: 100%;
+    max-width: 460px;
+    height: 420px;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero__title {
+    font-size: 38px;
+  }
+
+  .hero__text {
+    font-size: 16px;
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero__button {
+    width: 100%;
+  }
+
+  .hero__image-wrap {
+    height: 340px;
+    border-radius: 28px;
+  }
+}
