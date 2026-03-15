@@ -1,7 +1,12 @@
 import { User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-function Header() {
+interface HeaderProps {
+  onCartClick: () => void;
+  cartItemCount: number;
+}
+
+function Header({ onCartClick, cartItemCount }: HeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -14,7 +19,7 @@ function Header() {
       <nav className="header__nav">
         <Link to="/catalog" className="header__link">Catalog</Link>
         <a href="#" className="header__link">About</a>
-        <a href="#" className="header__link">Delivery</a>
+        <Link to="/delivery" className="header__link">Delivery</Link>
       </nav>
 
       <div className="header__actions">
@@ -24,8 +29,11 @@ function Header() {
 
         <a href="#" className="header__signin">Sign in</a>
 
-        <button className="header__icon-button" aria-label="Shopping cart">
+        <button className="header__icon-button header__cart-button" aria-label="Shopping cart" onClick={onCartClick}>
           <ShoppingCart size={30} strokeWidth={1.8} />
+          {cartItemCount > 0 && (
+            <span className="cart-badge">{cartItemCount}</span>
+          )}
         </button>
       </div>
     </header>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { products, type Product } from '../data/products';
+import { useCart } from '../contexts/CartContext';
 import '../pages/Catalog.css';
 
 interface FilterButtonProps {
@@ -58,27 +59,24 @@ function ProductCard({ product, onAddToCart, onRemoveFromCart, isInCart }: Produ
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'flowers' | 'accessories'>('all');
-  const [cartItems, setCartItems] = useState<Product[]>([]);
+  const { cartItems, addToCart, removeFromCart } = useCart();
 
   const filteredProducts = selectedCategory === 'all' 
     ? products 
     : products.filter(product => product.category === selectedCategory);
 
   const handleAddToCart = (product: Product) => {
-    setCartItems(prev => [...prev, product]);
+    addToCart(product);
   };
 
   const handleRemoveFromCart = (productId: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== productId));
+    removeFromCart(productId);
   };
 
   return (
     <div className="catalog">
       <div className="catalog__header">
         <h1 className="catalog__title">Product Catalog</h1>
-        <div className="catalog__cart-summary">
-          <span className="cart-count">{cartItems.length} items in cart</span>
-        </div>
       </div>
 
       <div className="catalog__filters">
@@ -110,29 +108,6 @@ export default function Catalog() {
           />
         ))}
       </div>
-
-      {cartItems.length > 0 && (
-        <div className="catalog__cart">
-          <h2 className="cart__title">Your Cart</h2>
-          <div className="cart__items">
-            {cartItems.map(item => (
-              <div key={item.id} className="cart__item">
-                <span className="cart__item-name">{item.name}</span>
-                <span className="cart__item-price">${item.price}</span>
-                <button 
-                  className="cart__remove-btn"
-                  onClick={() => handleRemoveFromCart(item.id)}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-          <div className="cart__total">
-            Total: ${cartItems.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
