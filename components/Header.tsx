@@ -1,16 +1,18 @@
 import { User, ShoppingCart } from "lucide-react";
-
+import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
   return (
     <header className="header">
       <div className="header__logo">
         <img src="/flower.png" alt="FloraShop logo" className="header__logo-image" />
-        <h1 className="header__logo-text">FloraShop</h1>
+        <h1 className="header__logo-text" onClick={() => navigate("/")}>FloraShop</h1>
       </div>
 
       <nav className="header__nav">
-        <a href="#" className="header__link">Catalog</a>
+        <Link to="/catalog" className="header__link">Catalog</Link>
         <a href="#" className="header__link">About</a>
         <a href="#" className="header__link">Delivery</a>
       </nav>

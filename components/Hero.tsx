@@ -1,6 +1,8 @@
-<img src="/hero-shop.jpg" alt="Flower shop full of plants" className="hero__image" />
+import { useNavigate } from "react-router-dom";
 
 function Hero() {
+  const navigate = useNavigate();
+
   return (
     <section className="hero">
       <div className="hero__mist hero__mist--pink"></div>
@@ -24,10 +26,10 @@ function Hero() {
         </p>
 
         <div className="hero__buttons">
-          <button className="hero__button hero__button--primary">
+          <button className="hero__button hero__button--primary" onClick={() => navigate("/catalog")}>
             Shop now
           </button>
-          <button className="hero__button hero__button--secondary">
+          <button className="hero__button hero__button--secondary" onClick={() => navigate("/catalog")}>
             View catalog
           </button>
         </div>
