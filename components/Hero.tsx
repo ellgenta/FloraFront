@@ -1,18 +1,26 @@
+<img src="/hero-shop.jpg" alt="Flower shop full of plants" className="hero__image" />
+
 function Hero() {
   return (
     <section className="hero">
+      <div className="hero__mist hero__mist--pink"></div>
+      <div className="hero__mist hero__mist--green"></div>
+      <div className="hero__mist hero__mist--soft"></div>
+
       <div className="hero__content">
-        <div className="hero__badge">Fresh flowers for your cozy space</div>
+        <div className="hero__badge">Fresh plants & floral harmony</div>
 
         <h2 className="hero__title">
-          Bring floral magic
+          Bring nature and
+          <br />
+          floral softness
           <br />
           into your home
         </h2>
 
         <p className="hero__text">
-          Discover delicate flowers, elegant bouquets, and beautiful plants
-          that make every room feel softer, fresher, and more alive.
+          Discover elegant plants, blooming flowers, and cozy green details
+          that make your space feel calm, fresh, and full of life.
         </p>
 
         <div className="hero__buttons">
@@ -26,7 +34,7 @@ function Hero() {
 
         <div className="hero__features">
           <div className="hero__feature">Fresh daily</div>
-          <div className="hero__feature">Soft floral style</div>
+          <div className="hero__feature">Natural beauty</div>
           <div className="hero__feature">Fast delivery</div>
         </div>
       </div>
@@ -34,10 +42,10 @@ function Hero() {
       <div className="hero__visual">
         <div className="hero__image-wrap">
           <img
-            src="https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=900&q=80"
-            alt="Pink flowers in vase"
-            className="hero__image"
-          />
+             src="/hero-shop.jpg"
+              alt="Flower shop full of plants"
+             className="hero__image"
+/>
         </div>
       </div>
     </section>
