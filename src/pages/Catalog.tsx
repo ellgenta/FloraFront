@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { products, type Product } from '../data/products';
 import { useCart } from '../contexts/CartContext';
+import SearchSection from '../../components/SearchBar';
 import '../pages/Catalog.css';
 
 interface FilterButtonProps {
@@ -37,14 +38,14 @@ function ProductCard({ product, onAddToCart, onRemoveFromCart, isInCart }: Produ
         <div className="product-card__footer">
           <span className="product-card__price">${product.price}</span>
           {isInCart ? (
-            <button 
+            <button
               className="product-card__btn product-card__btn--remove"
               onClick={() => onRemoveFromCart(product.id)}
             >
               Remove from Cart
             </button>
           ) : (
-            <button 
+            <button
               className="product-card__btn product-card__btn--add"
               onClick={() => onAddToCart(product)}
             >
@@ -59,11 +60,19 @@ function ProductCard({ product, onAddToCart, onRemoveFromCart, isInCart }: Produ
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'flowers' | 'accessories'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const { cartItems, addToCart, removeFromCart } = useCart();
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
+  const filteredProducts = products.filter(product => {
+    const matchesCategory =
+      selectedCategory === 'all' || product.category === selectedCategory;
+
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -77,7 +86,10 @@ export default function Catalog() {
     <div className="catalog">
       <div className="catalog__header">
         <h1 className="catalog__title">Product Catalog</h1>
-      </div>
+       </div>
+      <SearchSection value={searchQuery} onChange={setSearchQuery} />
+    
+    
 
       <div className="catalog__filters">
         <FilterButton

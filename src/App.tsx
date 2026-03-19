@@ -12,18 +12,22 @@ import { useState } from "react";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { getTotalItems } = useCart();
 
   return (
     <div className="app">
       <Header onCartClick={() => setIsCartOpen(true)} cartItemCount={getTotalItems()} />
       <Routes>
-        <Route path="/" element={
-          <>
-            <Hero />
-            <SearchSection />
-          </>
-        } />
+        <Route
+          path="/"
+          element={
+            <>
+              <Hero />
+              <SearchSection value={searchQuery} onChange={setSearchQuery} />
+            </>
+          }
+        />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/delivery" element={<Delivery />} />
       </Routes>
