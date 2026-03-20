@@ -9,6 +9,7 @@ import { CartProvider, useCart } from "./contexts/CartContext";
 import Catalog from "./pages/Catalog";
 import Delivery from "./pages/Delivery";
 import { useState } from "react";
+import Testimonial from "../components/Testimonial";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -25,6 +26,7 @@ function AppContent() {
             <>
               <Hero />
               <SearchSection value={searchQuery} onChange={setSearchQuery} />
+              <Testimonial />
             </>
           }
         />

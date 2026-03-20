@@ -1,0 +1,78 @@
+.testimonials {
+  padding: 60px 40px;
+}
+
+.testimonials__title {
+  text-align: center;
+  font-size: 40px;
+  color: #31452f;
+  margin-bottom: 30px;
+}
+
+/* горизонтальный скролл */
+.testimonials__track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+/* карточка */
+.testimonial-card {
+  min-width: 340px;
+  max-width: 340px;
+  background: #f5f7f3;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid #e1e8dc;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+/* 🔥 РОЗОВАЯ ТЕНЬ ПРИ HOVER */
+.testimonial-card:hover {
+  box-shadow: 0 10px 25px rgba(211, 154, 192, 0.35);
+  transform: translateY(-4px);
+}
+
+/* header */
+.testimonial-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.testimonial-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.testimonial-card__name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.testimonial-card__date {
+  font-size: 13px;
+  color: #8a9788;
+}
+
+/* рейтинг */
+.testimonial-card__rating {
+  color: #f4c542;
+  margin-bottom: 10px;
+}
+
+/* текст */
+.testimonial-card__text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
