@@ -344,7 +344,7 @@
 .search-section {
   width: 100%;
   padding: 48px 24px 64px;
-  background: linear-gradient(180deg, #eef8f1 0%, #f6fbf6 100%);
+  background: linear-gradient(180deg, #eef8f1 0%, #eef4ea 100%);
 }
 
 .search-section__box {
@@ -352,7 +352,7 @@
   margin: 0 auto;
   padding: 40px 36px;
   border-radius: 32px;
-  background: rgba(255, 255, 255, 0.82);
+  background: #eef4ea;
   box-shadow: 0 20px 45px rgba(89, 121, 95, 0.08);
   text-align: center;
   border: 1px solid rgba(214, 230, 216, 0.9);
@@ -424,7 +424,7 @@
 .search-section {
   width: 100%;
   padding: 34px 24px 48px;
-  background: linear-gradient(180deg, #eef8f1 0%, #f6fbf6 100%);
+  background: linear-gradient(180deg, #eef8f1 0%,#eef4ea 100%);
   display: flex;
   justify-content: center;
 }

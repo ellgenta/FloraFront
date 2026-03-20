@@ -1,4 +1,6 @@
-import "./Testimonial.css"
+import "./Testimonial.css";
+import { useRef } from "react";
+
 const testimonials = [
   {
     id: 1,
@@ -22,7 +24,7 @@ const testimonials = [
     id: 4,
     name: "Sofia",
     city: "Chisinau",
-    text: "The order arrived on time and matched the photos perfectly.",
+    text: "The order arrived on time and matched photos perfectly.",
   },
   {
     id: 5,
@@ -33,32 +35,59 @@ const testimonials = [
 ];
 
 function Testimonials() {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollLeft = () => {
+    if (trackRef.current) {
+      trackRef.current.scrollBy({ left: -360, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (trackRef.current) {
+      trackRef.current.scrollBy({ left: 360, behavior: "smooth" });
+    }
+  };
+
   return (
     <section className="testimonials">
       <h2 className="testimonials__title">What our customers say</h2>
 
-      <div className="testimonials__track">
-        {testimonials.map((item) => (
-          <div key={item.id} className="testimonial-card">
-            
-            <div className="testimonial-card__top">
-              <div className="testimonial-card__avatar">
-                {item.name[0]}
+      <div className="testimonials__wrapper">
+        <button
+          className="testimonials__arrow testimonials__arrow--left"
+          onClick={scrollLeft}
+          aria-label="Scroll left"
+        >
+          ‹
+        </button>
+
+        <div className="testimonials__track" ref={trackRef}>
+          {testimonials.map((item) => (
+            <article key={item.id} className="testimonial-card">
+              <div className="testimonial-card__header">
+                <div className="testimonial-card__avatar">{item.name[0]}</div>
+
+                <div className="testimonial-card__info">
+                  <div className="testimonial-card__name">{item.name}</div>
+                  <div className="testimonial-card__city">{item.city}</div>
+                </div>
               </div>
 
-              <div>
-                <div className="testimonial-card__name">{item.name}</div>
-                <div className="testimonial-card__city">{item.city}</div>
-              </div>
-            </div>
+              <div className="testimonial-card__rating">★★★★★</div>
 
-            <div className="testimonial-card__rating">
-              ★★★★★
-            </div>
+              <p className="testimonial-card__text">{item.text}</p>
+            </article>
+          ))}
+        </div>
 
-            <p className="testimonial-card__text">{item.text}</p>
-          </div>
-        ))}
+        <button
+          className="testimonials__arrow testimonials__arrow--right"
+          onClick={scrollRight}
+          aria-label="Scroll right"
+        >
+          ›
+        </button>
       </div>
     </section>
   );

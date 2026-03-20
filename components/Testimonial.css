@@ -1,78 +1,165 @@
 .testimonials {
-  padding: 60px 40px;
+  width: 100%;
+  padding: 72px 48px 84px;
+  box-sizing: border-box;
+   background: #eef4ea; 
 }
 
 .testimonials__title {
   text-align: center;
-  font-size: 40px;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
   color: #31452f;
-  margin-bottom: 30px;
+  margin: 0 0 36px;
 }
 
-/* горизонтальный скролл */
+.testimonials__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .testimonials__track {
   display: flex;
-  gap: 20px;
+  gap: 28px;
   overflow-x: auto;
-  padding-bottom: 10px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 8px 56px;
+  width: 100%;
 }
 
-/* карточка */
+.testimonials__track::-webkit-scrollbar {
+  display: none;
+}
+
 .testimonial-card {
-  min-width: 340px;
-  max-width: 340px;
-  background: #f5f7f3;
-  border-radius: 16px;
-  padding: 18px;
-  border: 1px solid #e1e8dc;
-  transition: all 0.25s ease;
-  cursor: pointer;
+  min-width: 380px;
+  max-width: 380px;
+  flex-shrink: 0;
+  background: #f8faf7;
+  border: 1px solid #d8e0d3;
+  border-radius: 24px;
+  padding: 26px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 24px rgba(49, 69, 47, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* 🔥 РОЗОВАЯ ТЕНЬ ПРИ HOVER */
 .testimonial-card:hover {
-  box-shadow: 0 10px 25px rgba(211, 154, 192, 0.35);
   transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(211, 154, 192, 0.28);
 }
 
-/* header */
 .testimonial-card__header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .testimonial-card__avatar {
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: #dcdcdc;
+  background: #e8e8e8;
+  color: #222;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.testimonial-card__info {
+  display: flex;
+  flex-direction: column;
 }
 
 .testimonial-card__name {
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f1f1f;
+  line-height: 1.2;
+}
+
+.testimonial-card__city {
   font-size: 16px;
+  color: #4f5f4d;
+  margin-top: 2px;
 }
 
-.testimonial-card__date {
-  font-size: 13px;
-  color: #8a9788;
-}
-
-/* рейтинг */
 .testimonial-card__rating {
-  color: #f4c542;
-  margin-bottom: 10px;
+  color: #f0c54a;
+  font-size: 22px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
 }
 
-/* текст */
 .testimonial-card__text {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: #3e4b3d;
+}
+
+.testimonials__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: #d39ac0;
+  color: #eef4ea;
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 10px 24px rgba(211, 154, 192, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.testimonials__arrow:hover {
+  background: #cb89b5;
+  transform: translateY(-50%) scale(1.06);
+  box-shadow: 0 14px 28px rgba(211, 154, 192, 0.42);
+}
+
+.testimonials__arrow--left {
+  left: 0;
+}
+
+.testimonials__arrow--right {
+  right: 0;
+}
+
+@media (max-width: 900px) {
+  .testimonials {
+    padding: 56px 20px 72px;
+  }
+
+  .testimonials__title {
+    font-size: 42px;
+  }
+
+  .testimonial-card {
+    min-width: 300px;
+    max-width: 300px;
+    padding: 22px;
+  }
+
+  .testimonials__track {
+    padding: 8px 44px;
+    gap: 18px;
+  }
+
+  .testimonials__arrow {
+    width: 44px;
+    height: 44px;
+    font-size: 28px;
+  }
 }
