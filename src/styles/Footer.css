@@ -1,0 +1,49 @@
+.footer {
+  width: 100%;
+  padding: 56px 24px 40px;
+  background: linear-gradient(135deg, #eaf5eb 0%, #f1f9f1 55%, #edf7ee 100%);
+  border-top: 1px solid rgba(191, 214, 195, 0.65);
+  text-align: center;
+}
+
+.footer__top {
+  max-width: 760px;
+  margin: 0 auto 28px;
+}
+
+.footer__brand {
+  margin: 0 0 14px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #2f4732;
+}
+
+.footer__description {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.7;
+  color: #617565;
+}
+
+.footer__contacts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 17px;
+  color: #6d7f70;
+}
+
+.footer__contact {
+  transition: color 0.2s ease;
+}
+
+.footer__contact:hover {
+  color: #d28ab0;
+}
+
+.footer__divider {
+  color: #c79ab3;
+}

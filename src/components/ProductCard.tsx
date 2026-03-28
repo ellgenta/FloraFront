@@ -1,4 +1,5 @@
-import { type Product } from '../src/data/products';
+import { type Product } from '../data/products';
+import "../styles/ProductCard.css";
 
 interface ProductCardProps {
   product: Product;

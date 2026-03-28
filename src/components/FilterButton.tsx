@@ -1,3 +1,5 @@
+import "../styles/FilterButton.css";
+
 interface FilterButtonProps {
   label: string;
   isActive: boolean;

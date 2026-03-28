@@ -1,6 +1,6 @@
-import { type Product } from '../src/data/products';
+import { type Product } from '../data/products';
 import ProductCard from './ProductCard';
-
+import "../styles/ProductList.css";
 interface ProductListProps {
   products: Product[];
   cartItems: Product[];
@@ -15,7 +15,7 @@ export default function ProductList({
   onRemoveFromCart,
 }: ProductListProps) {
   return (
-    <div className="catalog__products">
+    <div className="product-list">
       {products.map(product => (
         <ProductCard
           key={product.id}

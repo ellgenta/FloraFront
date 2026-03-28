@@ -1,5 +1,6 @@
 import React from 'react';
 import { Truck, Clock, MapPin, Phone, Mail } from 'lucide-react';
+import '../styles/Delivery.css';
 
 const Delivery: React.FC = () => {
   return (

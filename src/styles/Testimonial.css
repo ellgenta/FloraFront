@@ -2,13 +2,14 @@
   width: 100%;
   padding: 72px 48px 84px;
   box-sizing: border-box;
-   background: #eef4ea; 
+  background: #eef4ea; 
 }
 
 .testimonials__title {
   text-align: center;
   font-size: 64px;
   font-weight: 700;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   line-height: 1.1;
   color: #31452f;
   margin: 0 0 36px;
@@ -139,11 +140,9 @@
 
 @media (max-width: 900px) {
   .testimonials {
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba#bfd6c3a6 (191, 214, 195, 0.65);
     padding: 56px 20px 72px;
-  }
-
-  .testimonials__title {
-    font-size: 42px;
   }
 
   .testimonial-card {

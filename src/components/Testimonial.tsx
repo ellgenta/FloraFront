@@ -1,4 +1,4 @@
-import "./Testimonial.css";
+import "../styles/Testimonial.css";
 import { useRef } from "react";
 
 const testimonials = [

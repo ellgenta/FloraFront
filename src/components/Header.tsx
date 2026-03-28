@@ -1,5 +1,6 @@
 import { User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/Header.css";
 
 interface HeaderProps {
   onCartClick: () => void;

@@ -1,3 +1,5 @@
+import "../styles/SearchBar.css";
+
 interface SearchSectionProps {
   value: string;
   onChange: (value: string) => void;

@@ -1,15 +1,15 @@
-import "./App.css";
-import Header from "../components/Header";
-import Hero from "../components/Hero";
-import SearchSection from "../components/SearchBar";
-import Footer from "../components/Footer";
-import CartModal from "../components/CartModal";
+import "./styles/App.css";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
+import SearchSection from "./components/SearchBar";
+import Footer from "./components/Footer";
+import CartModal from "./components/CartModal";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider, useCart } from "./contexts/CartContext";
 import Catalog from "./pages/Catalog";
 import Delivery from "./pages/Delivery";
 import { useState } from "react";
-import Testimonial from "../components/Testimonial";
+import Testimonial from "./components/Testimonial";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);

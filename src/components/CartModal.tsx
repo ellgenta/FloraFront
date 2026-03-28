@@ -1,7 +1,8 @@
 import React from 'react';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
-import { useCart } from '../src/contexts/CartContext';
-import type { CartItem } from '../src/contexts/CartContext';
+import { useCart } from '../contexts/CartContext';
+import type { CartItem } from '../contexts/CartContext';
+import '../styles/CartModal.css';
 
 interface CartModalProps {
   isOpen: boolean;

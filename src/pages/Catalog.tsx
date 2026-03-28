@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { products, type Product } from '../data/products';
 import { useCart } from '../contexts/CartContext';
-import SearchSection from '../../components/SearchBar';
-import FilterButton from '../../components/FilterButton';
-import ProductCard from '../../components/ProductCard';
-import ProductList from '../../components/ProductList';
-import '../pages/Catalog.css';
+import SearchSection from '../components/SearchBar';
+import FilterButton from '../components/FilterButton';
+import ProductList from '../components/ProductList';
+import '../styles/Catalog.css';
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'flowers' | 'accessories'>('all');
