@@ -1,8 +1,8 @@
 .footer {
   width: 100%;
   padding: 56px 24px 40px;
-  background: linear-gradient(135deg, #eaf5eb 0%, #f1f9f1 55%, #edf7ee 100%);
-  border-top: 1px solid rgba(191, 214, 195, 0.65);
+  background: #dae2d4;
+  border-top: 1px solid rgba(119, 127, 120, 0.65);
   text-align: center;
 }
 

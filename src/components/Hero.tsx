@@ -30,7 +30,7 @@ function Hero() {
           <button className="hero__button hero__button--primary" onClick={() => navigate("/catalog")}>
             Shop now
           </button>
-          <button className="hero__button hero__button--secondary" onClick={() => navigate("/catalog")}>
+          <button className="hero__button hero__button--secondary" onClick={() => navigate("*")}>
             View catalog
           </button>
         </div>

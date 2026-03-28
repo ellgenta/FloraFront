@@ -35,7 +35,7 @@ export default function Catalog() {
       <div className="catalog__header">
         <h1 className="catalog__title">Product Catalog</h1>
        </div>
-      <SearchSection value={searchQuery} onChange={setSearchQuery} />
+      {/*<SearchSection value={searchQuery} onChange={setSearchQuery} />*/}
     
     
 
