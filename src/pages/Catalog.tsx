@@ -2,61 +2,10 @@ import { useState } from 'react';
 import { products, type Product } from '../data/products';
 import { useCart } from '../contexts/CartContext';
 import SearchSection from '../../components/SearchBar';
+import FilterButton from '../../components/FilterButton';
+import ProductCard from '../../components/ProductCard';
+import ProductList from '../../components/ProductList';
 import '../pages/Catalog.css';
-
-interface FilterButtonProps {
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-function FilterButton({ label, isActive, onClick }: FilterButtonProps) {
-  return (
-    <button
-      className={`filter-btn ${isActive ? 'filter-btn--active' : ''}`}
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  );
-}
-
-interface ProductCardProps {
-  product: Product;
-  onAddToCart: (product: Product) => void;
-  onRemoveFromCart: (productId: string) => void;
-  isInCart: boolean;
-}
-
-function ProductCard({ product, onAddToCart, onRemoveFromCart, isInCart }: ProductCardProps) {
-  return (
-    <div className="product-card">
-      <img src={product.image} alt={product.name} className="product-card__image" />
-      <div className="product-card__content">
-        <h3 className="product-card__name">{product.name}</h3>
-        <p className="product-card__description">{product.description}</p>
-        <div className="product-card__footer">
-          <span className="product-card__price">${product.price}</span>
-          {isInCart ? (
-            <button
-              className="product-card__btn product-card__btn--remove"
-              onClick={() => onRemoveFromCart(product.id)}
-            >
-              Remove from Cart
-            </button>
-          ) : (
-            <button
-              className="product-card__btn product-card__btn--add"
-              onClick={() => onAddToCart(product)}
-            >
-              Add to Cart
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'flowers' | 'accessories'>('all');
@@ -109,17 +58,12 @@ export default function Catalog() {
         />
       </div>
 
-      <div className="catalog__products">
-        {filteredProducts.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={handleAddToCart}
-            onRemoveFromCart={handleRemoveFromCart}
-            isInCart={cartItems.some(item => item.id === product.id)}
-          />
-        ))}
-      </div>
+      <ProductList
+        products={filteredProducts}
+        cartItems={cartItems}
+        onAddToCart={handleAddToCart}
+        onRemoveFromCart={handleRemoveFromCart}
+      />
     </div>
   );
 }
