@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import type { CartItem } from '../contexts/CartContext';
@@ -11,31 +11,45 @@ interface CartModalProps {
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const { cartItems, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
+  const [visible, setVisible] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => setVisible(true));
+    } else {
+      setVisible(false);
+    }
+  }, [isOpen]);
 
   const handleCheckout = () => {
     alert('Checkout functionality would be implemented here!');
-    // Here you would typically navigate to checkout page or integrate with payment system
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="cart-modal-overlay" onClick={onClose}>
-      <div className="cart-modal" onClick={e => e.stopPropagation()}>
+    <div
+      className={`cart-modal-overlay ${visible ? 'cart-modal-overlay--visible' : ''}`}
+      onClick={onClose}
+    >
+      <div
+        className={`cart-modal ${visible ? 'cart-modal--visible' : ''}`}
+        onClick={e => e.stopPropagation()}
+      >
         <div className="cart-modal-header">
           <h2 className="cart-modal-title">
-            <ShoppingBag size={24} />
+            <ShoppingBag size={22} strokeWidth={1.8} />
             Your Cart ({cartItems.length} items)
           </h2>
-          <button className="cart-modal-close" onClick={onClose}>
-            <X size={24} />
+          <button className="cart-modal-close" onClick={onClose} aria-label="Close">
+            <X size={20} strokeWidth={1.8} />
           </button>
         </div>
 
         <div className="cart-modal-content">
           {cartItems.length === 0 ? (
             <div className="cart-empty">
-              <ShoppingBag size={48} />
+              <ShoppingBag size={48} strokeWidth={1.4} />
               <p>Your cart is empty</p>
               <button className="cart-continue-shopping" onClick={onClose}>
                 Continue Shopping
@@ -62,14 +76,14 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                           className="quantity-btn"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
-                          <Minus size={16} />
+                          <Minus size={14} />
                         </button>
                         <span className="quantity">{item.quantity}</span>
                         <button
                           className="quantity-btn"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
-                          <Plus size={16} />
+                          <Plus size={14} />
                         </button>
                       </div>
                       <button

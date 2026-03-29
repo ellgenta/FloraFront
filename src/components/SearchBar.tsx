@@ -19,7 +19,7 @@ const categories = [
 
 function SearchSection({ value, onChange }: SearchSectionProps) {
   return (
-    <section className="search-section">
+    <section id = "search_section" className="search-section">
       <h2 className="search-section__title">Explore the web meadow</h2>
 
       <div className="search-section__form">

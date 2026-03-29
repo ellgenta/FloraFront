@@ -1,4 +1,5 @@
 import "./styles/App.css";
+import ScrollToTop from "./components/ScrollToTop";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import SearchSection from "./components/SearchBar";
@@ -43,6 +44,7 @@ function App() {
   return (
     <CartProvider>
       <Router>
+        <ScrollToTop />
         <AppContent />
       </Router>
     </CartProvider>

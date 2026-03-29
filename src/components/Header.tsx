@@ -1,4 +1,4 @@
-import { User, ShoppingCart, X } from "lucide-react";
+import { User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AuthModal from "./AuthModal.tsx";
