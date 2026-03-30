@@ -6,15 +6,13 @@ interface SearchSectionProps {
 function SearchSection({ value, onChange }: SearchSectionProps) {
   return (
     <section className="search-section">
-      <div className="search-section__form">
-        <input
-          type="text"
-          placeholder="Search for flowers, plants, decor..."
-          className="search-section__input"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      </div>
+      <input
+        type="text"
+        placeholder="Search for flowers, plants, decor..."
+        className="search-section__input"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </section>
   );
 }
