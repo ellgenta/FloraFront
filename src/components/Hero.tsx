@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import "../styles/Hero.css";
 
 function Hero() {
   const navigate = useNavigate();
@@ -29,8 +30,11 @@ function Hero() {
           <button className="hero__button hero__button--primary" onClick={() => navigate("/catalog")}>
             Shop now
           </button>
-          <button className="hero__button hero__button--secondary" onClick={() => navigate("/catalog")}>
-            View catalog
+          <button className="hero__button hero__button--secondary" onClick={() => document.getElementById("search_section")?.scrollIntoView({ behavior: "smooth" })}>
+            Explore
+          </button>
+          <button className="hero__button hero__button--secondary" onClick={() => document.getElementById("search_section")?.scrollIntoView({ behavior: "smooth" })}>
+            Discounts
           </button>
         </div>
 

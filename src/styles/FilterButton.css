@@ -1,0 +1,23 @@
+.filter-btn {
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: 1.5px solid #d6e6d8;
+  background: rgba(255, 255, 255, 0.96);
+  color: #6b7d6e;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.filter-btn--active {
+  background: linear-gradient(135deg, #e6a3c6 0%, #d987b3 100%);
+  color: white;
+  border-color: #d987b3;
+  box-shadow: 0 8px 20px rgba(217, 135, 179, 0.25);
+}

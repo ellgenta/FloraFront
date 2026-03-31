@@ -1,0 +1,93 @@
+/* Delivery Page Styles */
+.delivery {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eef8f1 0%, #f6fbf6 100%);
+}
+
+.delivery__hero {
+  background: linear-gradient(135deg, #edf7ee 0%, #f3fbf2 60%, #eef8f1 100%);
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.delivery__title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #2f4732;
+  margin: 0 0 16px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.delivery__subtitle {
+  font-size: 20px;
+  color: #617565;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.delivery__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.delivery__section {
+  margin-bottom: 60px;
+}
+
+.delivery__section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 32px;
+  font-weight: 600;
+  color: #2f4732;
+  margin: 0 0 32px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.delivery__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.delivery__card {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(57, 85, 61, 0.08);
+  border: 1px solid rgba(191, 214, 195, 0.3);
+}
+
+.delivery__card h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2f4732;
+}
+
+.delivery__card p {
+  font-size: 16px;
+  color: #617565;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .delivery__hero {
+    padding: 60px 24px;
+  }
+
+  .delivery__title {
+    font-size: 32px;
+  }
+
+  .delivery__content {
+    padding: 40px 24px;
+  }
+
+  .delivery__card {
+    padding: 24px;
+  }
+}
