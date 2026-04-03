@@ -491,3 +491,144 @@
   right: 170px;
   bottom: 359px;
 }
+
+.about-values {
+  background: #f4f7f2;
+  padding: 90px 20px 100px;
+}
+
+.about-values__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-values__title {
+  margin: 0 0 18px;
+  font-size: 56px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: #31452f;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.about-values__subtitle {
+  margin: 0 auto 50px;
+  max-width: 620px;
+  font-size: 24px;
+  line-height: 1.5;
+  color: #5c6c5b;
+}
+
+.about-values__cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.about-values__card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 8px 24px rgba(49, 69, 47, 0.05);
+  border: 1px solid rgba(49, 69, 47, 0.06);
+  text-align: left;
+}
+
+.about-values__card-title {
+  margin: 0 0 14px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #31452f;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.about-values__card-text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #5c6c5b;
+}
+
+/* tablet */
+@media (max-width: 1000px) {
+  .about-values__cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-values__title {
+    font-size: 46px;
+  }
+
+  .about-values__subtitle {
+    font-size: 21px;
+  }
+}
+
+/* mobile */
+@media (max-width: 640px) {
+  .about-values {
+    padding: 70px 16px 80px;
+  }
+
+  .about-values__cards {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .about-values__title {
+    font-size: 38px;
+  }
+
+  .about-values__subtitle {
+    margin-bottom: 36px;
+    font-size: 18px;
+  }
+
+  .about-values__card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .about-values__card-title {
+    font-size: 24px;
+  }
+
+  .about-values__card-text {
+    font-size: 16px;
+  }
+}
+
+.about-values__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.about-values__icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.about-values__card-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #31452f;
+  font-family: Georgia, "Times New Roman", serif;
+  text-align: left;
+}
+
+.about-values__card-text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #5c6c5b;
+  text-align: left;
+}
