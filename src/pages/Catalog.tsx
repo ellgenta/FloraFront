@@ -1,68 +1,71 @@
 import { useState } from 'react';
-import { products, type Product } from '../data/products';
+import { products } from '../data/products';
 import { useCart } from '../contexts/CartContext';
-import SearchSection from '../components/SearchBar';
-import FilterButton from '../components/FilterButton';
+import FilterSidebar from '../components/FilterSidebar';
 import ProductList from '../components/ProductList';
 import '../styles/Catalog.css';
 
+type SortOption = 'default' | 'price-asc' | 'price-desc' | 'discount';
+
 export default function Catalog() {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'flowers' | 'accessories'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [sortBy, setSortBy] = useState<SortOption>('default');
   const { cartItems, addToCart, removeFromCart } = useCart();
+
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
 
   const filteredProducts = products.filter(product => {
     const matchesCategory =
-      selectedCategory === 'all' || product.category === selectedCategory;
-
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesCategory && matchesSearch;
+      selectedCategories.length === 0 || selectedCategories.includes(product.category);
+    const matchesPrice = product.price >= minPrice && product.price <= maxPrice;
+    return matchesCategory && matchesPrice;
   });
-
-  const handleAddToCart = (product: Product) => {
-    addToCart(product);
-  };
-
-  const handleRemoveFromCart = (productId: string) => {
-    removeFromCart(productId);
-  };
 
   return (
     <div className="catalog">
-      <div className="catalog__header">
-        <h1 className="catalog__title">Product Catalog</h1>
-       </div>
-      {/*<SearchSection value={searchQuery} onChange={setSearchQuery} />*/}
-    
-    
+      <div className="catalog__inner">
+        <aside className="catalog__sidebar">
+          <FilterSidebar
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            onPriceChange={(min, max) => { setMinPrice(min); setMaxPrice(max); }}
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+          />
+        </aside>
 
-      <div className="catalog__filters">
-        <FilterButton
-          label="All"
-          isActive={selectedCategory === 'all'}
-          onClick={() => setSelectedCategory('all')}
-        />
-        <FilterButton
-          label="Flowers"
-          isActive={selectedCategory === 'flowers'}
-          onClick={() => setSelectedCategory('flowers')}
-        />
-        <FilterButton
-          label="Accessories"
-          isActive={selectedCategory === 'accessories'}
-          onClick={() => setSelectedCategory('accessories')}
-        />
+        <main className="catalog__main">
+          <div className="catalog__top-bar">
+            <h1 className="catalog__title">Flora Catalog</h1>
+            <div className="catalog__sort">
+              <label className="catalog__sort-label">Sort by</label>
+              <select
+                className="catalog__sort-select"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value as SortOption)}
+              >
+                <option value="default">Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="discount">Biggest Discount</option>
+              </select>
+            </div>
+          </div>
+
+          <ProductList
+            products={filteredProducts}
+            cartItems={cartItems}
+            onAddToCart={addToCart}
+            onRemoveFromCart={removeFromCart}
+          />
+        </main>
       </div>
-
-      <ProductList
-        products={filteredProducts}
-        cartItems={cartItems}
-        onAddToCart={handleAddToCart}
-        onRemoveFromCart={handleRemoveFromCart}
-      />
     </div>
   );
 }

@@ -52,7 +52,6 @@
 
 .header__link:hover {
   color: #d28ab0;
-  transform: translateY(-1px);
 }
 
 .header__actions {
