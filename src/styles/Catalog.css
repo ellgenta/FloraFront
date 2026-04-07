@@ -59,11 +59,17 @@
   background-repeat: no-repeat;
   background-position: right 12px center;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  accent-color: #4f6552;
 }
 
 .catalog__sort-select:focus {
   border-color: #7aab84;
   box-shadow: 0 0 0 3px rgba(122, 171, 132, 0.15);
+}
+
+.catalog__sort-select option:checked {
+  background-color: #eef8f1;
+  color: #2f4732;
 }
 
 @media (max-width: 768px) {

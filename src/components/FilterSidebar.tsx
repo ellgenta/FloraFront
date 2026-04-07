@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
 import '../styles/FilterSidebar.css';
 
 const PLANT_SUBCATEGORIES = [
@@ -33,7 +31,6 @@ export default function FilterSidebar({
 }: FilterSidebarProps) {
   const PRICE_MIN = 0;
   const PRICE_MAX = 1000;
-  const [plantsExpanded, setPlantsExpanded] = useState(false);
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Math.min(Number(e.target.value), maxPrice - 10);
@@ -45,32 +42,27 @@ export default function FilterSidebar({
     onPriceChange(minPrice, val);
   };
 
+  const handleMinInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Math.min(Number(e.target.value), maxPrice - 10);
+    if (!isNaN(val)) onPriceChange(val, maxPrice);
+  };
+
+  const handleMaxInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Math.max(Number(e.target.value), minPrice + 10);
+    if (!isNaN(val)) onPriceChange(minPrice, val);
+  };
+
   const leftPercent = ((minPrice - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
   const rightPercent = ((maxPrice - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
-
-  const handlePlantsToggle = () => {
-    onToggleCategory('plants');
-    if (!selectedCategories.includes('plants')) {
-      setPlantsExpanded(true);
-    } else {
-      setPlantsExpanded(false);
-    }
-  };
 
   return (
     <div className="filter-sidebar">
 
       <p className="filter-sidebar__title">Filters</p>
-
       <div className="filter-sidebar__divider" />
 
       {/* Price */}
       <p className="filter-sidebar__section-title">Price</p>
-
-      <div className="filter-sidebar__price-values">
-        <span>${minPrice}</span>
-        <span>${maxPrice}</span>
-      </div>
 
       <div className="filter-sidebar__range-wrapper">
         <div className="filter-sidebar__range-track">
@@ -91,36 +83,49 @@ export default function FilterSidebar({
         />
       </div>
 
+      {/* Price inputs */}
+      <div className="filter-sidebar__price-inputs">
+        <div className="filter-sidebar__price-input-group">
+          <span className="filter-sidebar__price-input-label">From</span>
+          <input
+            type="number" min={PRICE_MIN} max={maxPrice - 10} step={10}
+            value={minPrice}
+            onChange={handleMinInput}
+            className="filter-sidebar__price-input"
+          />
+        </div>
+        <div className="filter-sidebar__price-input-sep">—</div>
+        <div className="filter-sidebar__price-input-group">
+          <span className="filter-sidebar__price-input-label">To</span>
+          <input
+            type="number" min={minPrice + 10} max={PRICE_MAX} step={10}
+            value={maxPrice}
+            onChange={handleMaxInput}
+            className="filter-sidebar__price-input"
+          />
+        </div>
+      </div>
+
       <div className="filter-sidebar__divider" />
 
+      {/* Categories */}
       <p className="filter-sidebar__section-title">Products</p>
       <div className="filter-sidebar__categories">
         {CATEGORIES.map(cat => (
           <div key={cat.value}>
-            <div className="filter-sidebar__category-row">
-              <label className="filter-sidebar__checkbox-row">
-                <input
-                  type="checkbox"
-                  className="filter-sidebar__checkbox"
-                  checked={selectedCategories.includes(cat.value)}
-                  onChange={() => cat.value === 'plants' ? handlePlantsToggle() : onToggleCategory(cat.value)}
-                />
-                <span className="filter-sidebar__checkbox-label">{cat.label}</span>
-              </label>
-              {cat.hasSubcategories && (
-                <button
-                  className={`filter-sidebar__expand-btn ${plantsExpanded ? 'filter-sidebar__expand-btn--open' : ''}`}
-                  onClick={() => setPlantsExpanded(p => !p)}
-                  aria-label="Toggle subcategories"
-                >
-                  <ChevronDown size={15} strokeWidth={2} />
-                </button>
-              )}
-            </div>
+            <label className="filter-sidebar__checkbox-row">
+              <input
+                type="checkbox"
+                className="filter-sidebar__checkbox"
+                checked={selectedCategories.includes(cat.value)}
+                onChange={() => onToggleCategory(cat.value)}
+              />
+              <span className="filter-sidebar__checkbox-label">{cat.label}</span>
+            </label>
 
-            {/* Subcategories */}
+            {/* Permanent subcategories under Plants */}
             {cat.hasSubcategories && (
-              <div className={`filter-sidebar__subcategories ${plantsExpanded ? 'filter-sidebar__subcategories--open' : ''}`}>
+              <div className="filter-sidebar__subcategories">
                 {PLANT_SUBCATEGORIES.map(sub => (
                   <label key={sub.value} className="filter-sidebar__checkbox-row filter-sidebar__checkbox-row--sub">
                     <input

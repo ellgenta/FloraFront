@@ -5,13 +5,13 @@ import FilterSidebar from '../components/FilterSidebar';
 import ProductList from '../components/ProductList';
 import '../styles/Catalog.css';
 
-type SortOption = 'default' | 'price-asc' | 'price-desc' | 'discount';
+type SortOption = '' | 'price-asc' | 'price-desc' | 'discount';
 
 export default function Catalog() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
-  const [sortBy, setSortBy] = useState<SortOption>('default');
+  const [sortBy, setSortBy] = useState<SortOption>('');
   const { cartItems, addToCart, removeFromCart } = useCart();
 
   const toggleCategory = (cat: string) => {
@@ -50,7 +50,7 @@ export default function Catalog() {
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value as SortOption)}
               >
-                <option value="default">Featured</option>
+                <option value="">— Select —</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
                 <option value="discount">Biggest Discount</option>

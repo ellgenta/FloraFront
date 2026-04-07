@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:wght@400;500;600;700&display=swap');
+
 .filter-sidebar {
   display: flex;
   flex-direction: column;
@@ -9,27 +11,19 @@
 
 .filter-sidebar__title {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 32px;
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 50px;
   font-weight: 700;
   color: #2f4732;
 }
 
 .filter-sidebar__section-title {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 25px;
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 30px;
   font-weight: 700;
   color: #2f4732;
-  letter-spacing: 0.05em;
-}
-
-.filter-sidebar__price-values {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  font-weight: 600;
-  color: #4f6552;
+  letter-spacing: 0.08em;
 }
 
 .filter-sidebar__range-wrapper {
@@ -52,14 +46,12 @@
 .filter-sidebar__range-fill {
   position: absolute;
   height: 100%;
-  background: linear-gradient(90deg, #7aab84, #4f6552);
+  background: linear-gradient(90deg, #f5f3d8, #fbf24b, #ffc800);
   border-radius: 999px;
 }
 
 .filter-sidebar__range {
   position: absolute;
-  left: 0;
-  right: 0;
   width: 100%;
   -webkit-appearance: none;
   appearance: none;
@@ -67,6 +59,16 @@
   pointer-events: none;
   height: 4px;
   outline: none;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.filter-sidebar__range::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: transparent;
 }
 
 .filter-sidebar__range::-webkit-slider-thumb {
@@ -75,17 +77,23 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4f6552, #3d5440);
-  border: 2px solid #fff;
+  background: linear-gradient(135deg, #f6e2a3, #f5f793);
+  border: 3px solid #58755c;
   box-shadow: 0 2px 8px rgba(47, 71, 50, 0.25);
   cursor: pointer;
   pointer-events: all;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-top: -8px;
 }
 
 .filter-sidebar__range::-webkit-slider-thumb:hover {
   transform: scale(1.15);
   box-shadow: 0 4px 12px rgba(47, 71, 50, 0.35);
+}
+
+.filter-sidebar__range::-moz-range-track {
+  height: 4px;
+  background: transparent;
 }
 
 .filter-sidebar__range::-moz-range-thumb {
@@ -99,6 +107,62 @@
   pointer-events: all;
 }
 
+.filter-sidebar__price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-sidebar__price-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-sidebar__price-input-label {
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0b8a4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.filter-sidebar__price-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid rgba(191, 214, 195, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #2f4732;
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -moz-appearance: textfield;
+}
+
+.filter-sidebar__price-input::-webkit-outer-spin-button,
+.filter-sidebar__price-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.filter-sidebar__price-input:focus {
+  border-color: #7aab84;
+  box-shadow: 0 0 0 3px rgba(122, 171, 132, 0.15);
+}
+
+.filter-sidebar__price-input-sep {
+  font-size: 16px;
+  color: #a0b8a4;
+  padding-top: 18px;
+  flex-shrink: 0;
+}
+
 .filter-sidebar__divider {
   height: 1px;
   background: rgba(191, 214, 195, 0.65);
@@ -108,51 +172,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.filter-sidebar__category-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.filter-sidebar__expand-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #6f8672;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: color 0.2s ease, transform 0.25s ease;
-}
-
-.filter-sidebar__expand-btn--open {
-  transform: rotate(180deg);
-  color: #2f4732;
-}
-
-.filter-sidebar__expand-btn:hover {
-  color: #2f4732;
-}
-
-.filter-sidebar__subcategories {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.25s ease;
-  margin-top: 0;
-}
-
-.filter-sidebar__subcategories--open {
-  max-height: 200px;
-  opacity: 1;
-  margin-top: 10px;
 }
 
 .filter-sidebar__checkbox-row {
@@ -170,7 +189,7 @@
   width: 18px;
   height: 18px;
   border-radius: 4px;
-  accent-color: #4f6552;
+  accent-color: #ffc800;
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -178,9 +197,11 @@
 .filter-sidebar__checkbox--sub {
   width: 15px;
   height: 15px;
+  accent-color: #ffc800;
 }
 
 .filter-sidebar__checkbox-label {
+  font-family: 'Funnel Sans', sans-serif;
   font-size: 20px;
   color: #4f6552;
   user-select: none;
@@ -188,10 +209,17 @@
 }
 
 .filter-sidebar__checkbox-label--sub {
-  font-size: 17px;
-  color: #4e5b50;
+  font-size: 16px;
+  color: #2f4732;
 }
 
 .filter-sidebar__checkbox-row:hover .filter-sidebar__checkbox-label {
   color: #2f4732;
+}
+
+.filter-sidebar__subcategories {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
 }
