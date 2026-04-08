@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding-top: 78px;
   position: sticky;
   top: 136px;
 }
@@ -222,4 +221,96 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 10px;
+}
+
+.filter-sidebar__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.filter-sidebar__toggle-label {
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 20px;
+  color: #4f6552;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.filter-sidebar__toggle {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.filter-sidebar__toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.filter-sidebar__toggle-track {
+  position: absolute;
+  inset: 0;
+  background: #d6e6d8;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+.filter-sidebar__toggle input:checked ~ .filter-sidebar__toggle-track {
+  background: #f5d14f;
+}
+
+.filter-sidebar__toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.filter-sidebar__toggle input:checked ~ .filter-sidebar__toggle-track ~ .filter-sidebar__toggle-thumb {
+  transform: translateX(18px);
+}
+
+.filter-sidebar__sort {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-sidebar__sort-select {
+  width: 100%;
+  padding: 7px 10px;
+  margin-top: 10px;
+  border: 1px solid rgba(191, 214, 195, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #2f4732;
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8672' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-sidebar__sort-select:focus {
+  border-color: #7aab84;
+  box-shadow: 0 0 0 3px rgba(122, 171, 132, 0.15);
 }

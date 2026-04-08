@@ -20,12 +20,19 @@ export default function Catalog() {
     );
   };
 
-  const filteredProducts = products.filter(product => {
-    const matchesCategory =
-      selectedCategories.length === 0 || selectedCategories.includes(product.category);
-    const matchesPrice = product.price >= minPrice && product.price <= maxPrice;
-    return matchesCategory && matchesPrice;
-  });
+  const filteredProducts = products
+    .filter(product => {
+      const matchesCategory =
+        selectedCategories.length === 0 || selectedCategories.includes(product.category);
+      const matchesPrice = product.price >= minPrice && product.price <= maxPrice;
+      return matchesCategory && matchesPrice;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'price-asc') return a.price - b.price;
+      if (sortBy === 'price-desc') return b.price - a.price;
+      //if (sortBy === 'discount') return (b.discount ?? 0) - (a.discount ?? 0);
+      return 0;
+    });
 
   return (
     <div className="catalog">
@@ -37,27 +44,12 @@ export default function Catalog() {
             onPriceChange={(min, max) => { setMinPrice(min); setMaxPrice(max); }}
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
           />
         </aside>
 
         <main className="catalog__main">
-          <div className="catalog__top-bar">
-            <h1 className="catalog__title">Flora Catalog</h1>
-            <div className="catalog__sort">
-              <label className="catalog__sort-label">Sort by</label>
-              <select
-                className="catalog__sort-select"
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value as SortOption)}
-              >
-                <option value="">— Select —</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="discount">Biggest Discount</option>
-              </select>
-            </div>
-          </div>
-
           <ProductList
             products={filteredProducts}
             cartItems={cartItems}

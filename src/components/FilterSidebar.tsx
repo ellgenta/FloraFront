@@ -14,12 +14,16 @@ const CATEGORIES = [
   { value: 'tools', label: 'Tools' },
 ];
 
+type SortOption = '' | 'price-asc' | 'price-desc' | 'discount';
+
 interface FilterSidebarProps {
   minPrice: number;
   maxPrice: number;
   onPriceChange: (min: number, max: number) => void;
   selectedCategories: string[];
   onToggleCategory: (cat: string) => void;
+  sortBy: SortOption;
+  onSortChange: (sort: SortOption) => void;
 }
 
 export default function FilterSidebar({
@@ -28,6 +32,8 @@ export default function FilterSidebar({
   onPriceChange,
   selectedCategories,
   onToggleCategory,
+  sortBy,
+  onSortChange,
 }: FilterSidebarProps) {
   const PRICE_MIN = 0;
   const PRICE_MAX = 1000;
@@ -61,7 +67,6 @@ export default function FilterSidebar({
       <p className="filter-sidebar__title">Filters</p>
       <div className="filter-sidebar__divider" />
 
-      {/* Price */}
       <p className="filter-sidebar__section-title">Price</p>
 
       <div className="filter-sidebar__range-wrapper">
@@ -83,7 +88,6 @@ export default function FilterSidebar({
         />
       </div>
 
-      {/* Price inputs */}
       <div className="filter-sidebar__price-inputs">
         <div className="filter-sidebar__price-input-group">
           <span className="filter-sidebar__price-input-label">From</span>
@@ -108,22 +112,23 @@ export default function FilterSidebar({
 
       <div className="filter-sidebar__divider" />
 
-      {/* Categories */}
       <p className="filter-sidebar__section-title">Products</p>
       <div className="filter-sidebar__categories">
         {CATEGORIES.map(cat => (
           <div key={cat.value}>
-            <label className="filter-sidebar__checkbox-row">
-              <input
-                type="checkbox"
-                className="filter-sidebar__checkbox"
-                checked={selectedCategories.includes(cat.value)}
-                onChange={() => onToggleCategory(cat.value)}
-              />
-              <span className="filter-sidebar__checkbox-label">{cat.label}</span>
-            </label>
+            <div className="filter-sidebar__toggle-row">
+              <span className="filter-sidebar__toggle-label">{cat.label}</span>
+              <label className="filter-sidebar__toggle">
+                <input
+                  type="checkbox"
+                  checked={selectedCategories.includes(cat.value)}
+                  onChange={() => onToggleCategory(cat.value)}
+                />
+                <span className="filter-sidebar__toggle-track" />
+                <span className="filter-sidebar__toggle-thumb" />
+              </label>
+            </div>
 
-            {/* Permanent subcategories under Plants */}
             {cat.hasSubcategories && (
               <div className="filter-sidebar__subcategories">
                 {PLANT_SUBCATEGORIES.map(sub => (
@@ -143,6 +148,22 @@ export default function FilterSidebar({
             )}
           </div>
         ))}
+      </div>
+
+      <div className="filter-sidebar__divider" />
+
+      <div className="filter-sidebar__sort">
+        <span className="filter-sidebar__section-title">Sort by</span>
+        <select
+          className="filter-sidebar__sort-select"
+          value={sortBy}
+          onChange={e => onSortChange(e.target.value as SortOption)}
+        >
+          <option value="">— Select —</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="discount">Biggest Discount</option>
+        </select>
       </div>
 
     </div>
