@@ -12,6 +12,7 @@ import Delivery from "./pages/Delivery";
 import { useState } from "react";
 import Testimonial from "./components/Testimonial";
 import About from "./pages/AboutUs"
+import { FavoritesProvider } from "./contexts/FavoritesContext";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -44,12 +45,14 @@ function AppContent() {
 
 function App() {
   return (
+    <FavoritesProvider>
     <CartProvider>
       <Router>
         <ScrollToTop />
         <AppContent />
       </Router>
     </CartProvider>
+    </FavoritesProvider>
   );
 }
 

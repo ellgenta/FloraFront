@@ -1,7 +1,8 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'flowers' | 'accessories';
+  category: 'plants' | 'accessories' | 'fertilizers' | 'tools';
+  subcategory?: string;
   price: number;
   image: string;
   description: string;
@@ -9,52 +10,84 @@ export interface Product {
 
 export const products: Product[] = [
   {
-    id: 'rose-bouquet',
-    name: 'Elegant Rose Bouquet',
-    category: 'flowers',
+    id: 'monstera',
+    name: 'Monstera Deliciosa',
+    category: 'plants',
+    subcategory: 'Decorative Foliage',
     price: 45.99,
     image: '/flower.png',
-    description: 'A beautiful arrangement of fresh red roses'
+    description: 'Iconic tropical plant with large split leaves',
   },
   {
-    id: 'tulip-mix',
-    name: 'Spring Tulip Mix',
-    category: 'flowers',
+    id: 'pothos',
+    name: 'Golden Pothos',
+    category: 'plants',
+    subcategory: 'Decorative Foliage',
+    price: 18.99,
+    image: '/flower.png',
+    description: 'Easy-care trailing vine with golden-green leaves',
+  },
+  {
+    id: 'orchid',
+    name: 'Phalaenopsis Orchid',
+    category: 'plants',
+    subcategory: 'Flowering Plants',
     price: 32.50,
     image: '/flower.png',
-    description: 'Colorful mix of seasonal tulips'
+    description: 'Elegant orchid with long-lasting blooms',
   },
   {
-    id: 'orchid-pot',
-    name: 'Mini Orchid Plant',
-    category: 'flowers',
+    id: 'peace-lily',
+    name: 'Peace Lily',
+    category: 'plants',
+    subcategory: 'Flowering Plants',
     price: 28.99,
     image: '/flower.png',
-    description: 'Elegant orchid in a decorative pot'
+    description: 'Classic white blooms and air-purifying qualities',
   },
   {
-    id: 'sunflower-bunch',
-    name: 'Sunflower Bunch',
-    category: 'flowers',
-    price: 25.99,
+    id: 'echeveria',
+    name: 'Echeveria Rosette',
+    category: 'plants',
+    subcategory: 'Succulents',
+    price: 12.99,
     image: '/flower.png',
-    description: 'Bright and cheerful sunflowers'
+    description: 'Beautiful rosette-shaped succulent in soft pink tones',
   },
   {
-    id: 'lily-arrangement',
-    name: 'Lily Arrangement',
-    category: 'flowers',
-    price: 38.99,
+    id: 'aloe-vera',
+    name: 'Aloe Vera',
+    category: 'plants',
+    subcategory: 'Succulents',
+    price: 15.99,
     image: '/flower.png',
-    description: 'Elegant white lilies in a glass vase'
+    description: 'Hardy succulent with soothing gel-filled leaves',
   },
   {
-    id: 'flower-pot',
+    id: 'areca-palm',
+    name: 'Areca Palm',
+    category: 'plants',
+    subcategory: 'Palms & Trees',
+    price: 64.99,
+    image: '/flower.png',
+    description: 'Graceful feathery fronds that bring tropical vibes',
+  },
+  {
+    id: 'fiddle-leaf',
+    name: 'Fiddle Leaf Fig',
+    category: 'plants',
+    subcategory: 'Palms & Trees',
+    price: 79.99,
+    image: '/flower.png',
+    description: 'Statement tree with large violin-shaped leaves',
+  },
+  {
+    id: 'ceramic-pot',
     name: 'Ceramic Flower Pot',
     category: 'accessories',
     price: 18.99,
     image: '/flower.png',
-    description: 'Handcrafted ceramic pot for your plants'
+    description: 'Handcrafted ceramic pot for your plants',
   },
   {
     id: 'watering-can',
@@ -62,7 +95,7 @@ export const products: Product[] = [
     category: 'accessories',
     price: 24.50,
     image: '/flower.png',
-    description: 'Classic metal watering can with long spout'
+    description: 'Classic metal watering can with long spout',
   },
   {
     id: 'plant-stand',
@@ -70,22 +103,38 @@ export const products: Product[] = [
     category: 'accessories',
     price: 39.99,
     image: '/flower.png',
-    description: 'Rustic wooden stand for your favorite plants'
+    description: 'Rustic wooden stand for your favorite plants',
   },
   {
-    id: 'flower-shears',
-    name: 'Professional Flower Shears',
-    category: 'accessories',
+    id: 'liquid-fertilizer',
+    name: 'Liquid Growth Fertilizer',
+    category: 'fertilizers',
+    price: 14.99,
+    image: '/flower.png',
+    description: 'Balanced liquid fertilizer for lush growth',
+  },
+  {
+    id: 'slow-release',
+    name: 'Slow-Release Pellets',
+    category: 'fertilizers',
+    price: 11.99,
+    image: '/flower.png',
+    description: 'Feeds your plants for up to 6 months',
+  },
+  {
+    id: 'pruning-shears',
+    name: 'Pruning Shears',
+    category: 'tools',
     price: 15.99,
     image: '/flower.png',
-    description: 'Sharp shears for precise flower cutting'
+    description: 'Sharp bypass shears for clean, precise cuts',
   },
   {
     id: 'plant-mister',
     name: 'Plant Mister Bottle',
-    category: 'accessories',
+    category: 'tools',
     price: 12.99,
     image: '/flower.png',
-    description: 'Fine mist sprayer for plant care'
-  }
+    description: 'Fine mist sprayer for delicate plant care',
+  },
 ];
