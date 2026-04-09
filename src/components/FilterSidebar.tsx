@@ -1,17 +1,11 @@
 import '../styles/FilterSidebar.css';
-
-const PLANT_SUBCATEGORIES = [
-  { value: 'decorative-foliage', label: 'Decorative Foliage' },
-  { value: 'flowering', label: 'Flowering Plants' },
-  { value: 'succulents', label: 'Succulents' },
-  { value: 'palms-trees', label: 'Palms & Trees' },
-];
+import { SUBCATEGORIES } from '../data/subcategories';
 
 const CATEGORIES = [
-  { value: 'plants', label: 'Plants', hasSubcategories: true },
-  { value: 'accessories', label: 'Accessories' },
+  { value: 'plants',      label: 'Plants' },
+  { value: 'pots',        label: 'Pots' },
   { value: 'fertilizers', label: 'Fertilizers' },
-  { value: 'tools', label: 'Tools' },
+  { value: 'tools',       label: 'Tools' },
 ];
 
 type SortOption = '' | 'price-asc' | 'price-desc' | 'discount';
@@ -58,7 +52,7 @@ export default function FilterSidebar({
     if (!isNaN(val)) onPriceChange(minPrice, val);
   };
 
-  const leftPercent = ((minPrice - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
+  const leftPercent  = ((minPrice - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
   const rightPercent = ((maxPrice - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
 
   return (
@@ -129,23 +123,21 @@ export default function FilterSidebar({
               </label>
             </div>
 
-            {cat.hasSubcategories && (
-              <div className="filter-sidebar__subcategories">
-                {PLANT_SUBCATEGORIES.map(sub => (
-                  <label key={sub.value} className="filter-sidebar__checkbox-row filter-sidebar__checkbox-row--sub">
-                    <input
-                      type="checkbox"
-                      className="filter-sidebar__checkbox filter-sidebar__checkbox--sub"
-                      checked={selectedCategories.includes(sub.value)}
-                      onChange={() => onToggleCategory(sub.value)}
-                    />
-                    <span className="filter-sidebar__checkbox-label filter-sidebar__checkbox-label--sub">
-                      {sub.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
+            <div className="filter-sidebar__subcategories">
+              {SUBCATEGORIES[cat.value].map(sub => (
+                <label key={sub.value} className="filter-sidebar__checkbox-row filter-sidebar__checkbox-row--sub">
+                  <input
+                    type="checkbox"
+                    className="filter-sidebar__checkbox filter-sidebar__checkbox--sub"
+                    checked={selectedCategories.includes(sub.value)}
+                    onChange={() => onToggleCategory(sub.value)}
+                  />
+                  <span className="filter-sidebar__checkbox-label filter-sidebar__checkbox-label--sub">
+                    {sub.label}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
         ))}
       </div>

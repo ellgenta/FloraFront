@@ -1,4 +1,5 @@
 import { type Product } from '../data/products';
+import { getSubcategoryLabel } from '../data/subcategories';
 import { useFavorites } from '../contexts/FavoritesContext';
 import '../styles/ProductCard.css';
 
@@ -24,7 +25,9 @@ export default function ProductCard({
         <img src={product.image} alt={product.name} className="product-card__image" />
 
         {product.subcategory && (
-          <span className="product-card__tag">{product.subcategory}</span>
+          <span className="product-card__tag">
+            {getSubcategoryLabel(product.subcategory)}
+          </span>
         )}
 
         <button
