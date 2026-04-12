@@ -2,7 +2,7 @@ import "./styles/App.css";
 import ScrollToTop from "./components/ScrollToTop";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
-import SearchSection from "./components/SearchBar";
+import SearchSection from "./components/ExploreBar";
 import Footer from "./components/Footer";
 import CartModal from "./components/CartModal";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -11,12 +11,11 @@ import Catalog from "./pages/Catalog";
 import Delivery from "./pages/Delivery";
 import { useState } from "react";
 import Testimonial from "./components/Testimonial";
-import About from "./pages/AboutUs"
+import About from "./pages/AboutUs";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const { getTotalItems } = useCart();
 
   return (
@@ -28,13 +27,13 @@ function AppContent() {
           element={
             <>
               <Hero />
-              <SearchSection value={searchQuery} onChange={setSearchQuery} />
+              <SearchSection />
               <Testimonial />
             </>
           }
         />
         <Route path="/catalog" element={<Catalog />} />
-         <Route path="/about" element={<About />} />
+        <Route path="/about" element={<About />} />
         <Route path="/delivery" element={<Delivery />} />
       </Routes>
       <Footer />
@@ -46,12 +45,12 @@ function AppContent() {
 function App() {
   return (
     <FavoritesProvider>
-    <CartProvider>
-      <Router>
-        <ScrollToTop />
-        <AppContent />
-      </Router>
-    </CartProvider>
+      <CartProvider>
+        <Router>
+          <ScrollToTop />
+          <AppContent />
+        </Router>
+      </CartProvider>
     </FavoritesProvider>
   );
 }
