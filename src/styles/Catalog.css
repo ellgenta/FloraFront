@@ -109,7 +109,7 @@
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.catalog__pagination-btn:hover:not(:disabled) {
+.catalog__pagination-btn:hover:not(:disabled):not(.catalog__pagination-btn--active) {
   background: #eef8f1;
   border-color: #7aab84;
   box-shadow: 0 0 0 3px rgba(122, 171, 132, 0.15);
@@ -121,9 +121,10 @@
   color: #fff;
 }
 
+/* активная кнопка при наведении — только тень, цвет не меняется */
 .catalog__pagination-btn--active:hover {
-  background: #3e5241;
-  border-color: #3e5241;
+  background: #4f6552;
+  border-color: #4f6552;
   box-shadow: 0 0 0 3px rgba(122, 171, 132, 0.15);
 }
 

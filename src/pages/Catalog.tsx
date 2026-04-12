@@ -26,7 +26,6 @@ export default function Catalog() {
   const [currentPage, setCurrentPage] = useState(1);
   const { cartItems, addToCart, removeFromCart } = useCart();
 
-  // Apply category from navigation state if it changes (e.g. user clicks another card)
   useEffect(() => {
     const cat = (location.state as { category?: string } | null)?.category;
     if (cat) {
@@ -101,9 +100,10 @@ export default function Catalog() {
     safePage * PAGE_SIZE
   );
 
+  // единая функция — скролл работает и для цифр, и для стрелок
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
   };
 
   return (

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:wght@400;500;600;700&display=swap');
+
 .category-card {
   display: flex;
   flex-direction: column;
@@ -28,7 +30,7 @@
 }
 
 .category-card__title {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: 'Funnel Sans', sans-serif;
   font-size: 24px;
   font-weight: 500;
   color: #31452f;
