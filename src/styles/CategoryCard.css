@@ -4,6 +4,7 @@
   border-radius: 10px;
   overflow: hidden;
   background: #ffffff;
+  height: 320px;
   border: 0px solid rgba(119, 127, 120, 0.65);
   box-shadow: 0 4px 16px rgba(49, 69, 47, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;

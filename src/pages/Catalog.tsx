@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { products } from '../data/products';
 import { SUBCATEGORIES } from '../data/subcategories';
 import { useCart } from '../contexts/CartContext';
@@ -12,12 +13,27 @@ const ALL_SUBCATEGORY_VALUES = Object.values(SUBCATEGORIES).flat().map(s => s.va
 const PAGE_SIZE = 12;
 
 export default function Catalog() {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const location = useLocation();
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
+    const cat = (location.state as { category?: string } | null)?.category;
+    return cat ? [cat] : [];
+  });
+
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [sortBy, setSortBy] = useState<SortOption>('');
   const [currentPage, setCurrentPage] = useState(1);
   const { cartItems, addToCart, removeFromCart } = useCart();
+
+  // Apply category from navigation state if it changes (e.g. user clicks another card)
+  useEffect(() => {
+    const cat = (location.state as { category?: string } | null)?.category;
+    if (cat) {
+      setSelectedCategories([cat]);
+      setCurrentPage(1);
+    }
+  }, [location.state]);
 
   const toggleCategory = (cat: string) => {
     setCurrentPage(1);

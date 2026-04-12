@@ -17,13 +17,19 @@ function Header({ onCartClick, cartItemCount }: HeaderProps) {
     <>
       <header className="header">
         <div className="header__logo">
-          <img src="/flower.png" alt="FloraShop logo" className="header__logo-image" />
+          <img
+            src="/flower.png"
+            alt="FloraShop logo"
+            className="header__logo-image"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          />
           <h1 className="header__logo-text" onClick={() => navigate("/")}>FloraShop</h1>
         </div>
 
         <nav className="header__nav">
           <Link to="/catalog" className="header__link">Catalog</Link>
-         <Link to="/about" className="header__link">About</Link>
+          <Link to="/about" className="header__link">About</Link>
           <Link to="/delivery" className="header__link">Delivery</Link>
         </nav>
 
