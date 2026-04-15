@@ -1,7 +1,5 @@
 import { Heart, User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import AuthModal from "./AuthModal.tsx";
 import "../styles/Header.css";
 
 interface HeaderProps {
@@ -11,42 +9,46 @@ interface HeaderProps {
 
 function Header({ onCartClick, cartItemCount }: HeaderProps) {
   const navigate = useNavigate();
-  const [authOpen, setAuthOpen] = useState(false);
 
   return (
-    <>
-      <header className="header">
-        <div className="header__left">
-          <div className="header__logo">
-            <img
-              src="/flower.png"
-              alt="FloraShop logo"
-              className="header__logo-image"
-              onClick={() => navigate("/")}
-              style={{ cursor: "pointer" }}
-            />
-            <h1 className="header__logo-text" onClick={() => navigate("/")}>FloraShop</h1>
-          </div>
-
-          <nav className="header__nav">
-            <Link to="/catalog" className="header__link">Catalog</Link>
-            <Link to="/about" className="header__link">About</Link>
-            <Link to="/delivery" className="header__link">Delivery</Link>
-          </nav>
+    <header className="header">
+      <div className="header__left">
+        <div className="header__logo">
+          <img
+            src="/flower.png"
+            alt="FloraShop logo"
+            className="header__logo-image"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          />
+          <h1
+            className="header__logo-text"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          >
+            FloraShop
+          </h1>
         </div>
 
-        <div className="header__right">
-          <input
-            type="text"
-            placeholder="Search by product name..."
-            className="header__search-input"
-          />
+        <nav className="header__nav">
+          <Link to="/catalog" className="header__link">Catalog</Link>
+          <Link to="/about" className="header__link">About</Link>
+          <Link to="/delivery" className="header__link">Delivery</Link>
+        </nav>
+      </div>
 
-          <div className="header__actions">
+      <div className="header__right">
+        <input
+          type="text"
+          placeholder="Search by product name..."
+          className="header__search-input"
+        />
+
+        <div className="header__actions">
           <button
             className="header__icon-button"
             aria-label="User profile"
-            onClick={() => setAuthOpen(true)}
+            onClick={() => navigate("/login")}
           >
             <User size={28} strokeWidth={1.8} />
           </button>
@@ -70,11 +72,8 @@ function Header({ onCartClick, cartItemCount }: HeaderProps) {
             )}
           </button>
         </div>
-        </div>
-      </header>
-
-      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
-    </>
+      </div>
+    </header>
   );
 }
 

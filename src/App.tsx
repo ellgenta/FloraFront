@@ -15,7 +15,9 @@ import About from "./pages/AboutUs";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import ProductPage from "./components/ProductPage";
 import { RecentlyViewedProvider } from "./contexts/RecentlyViewedContext";
-import FavoritesPage from './pages/FavoritesPage';
+import FavoritesPage from "./pages/FavoritesPage";
+import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -23,24 +25,30 @@ function AppContent() {
 
   return (
     <div className="app">
-      <Header onCartClick={() => setIsCartOpen(true)} cartItemCount={getTotalItems()} />
+      <Header
+        onCartClick={() => setIsCartOpen(true)}
+        cartItemCount={getTotalItems()}
+      />
+
       <Routes>
-  <Route
-    path="/"
-    element={
-      <>
-        <Hero />
-        <SearchSection />
-        <Testimonial />
-      </>
-    }
-  />
-  <Route path="/catalog" element={<Catalog />} />
-  <Route path="/product/:id" element={<ProductPage />} />
-  <Route path="/about" element={<About />} />
-  <Route path="/delivery" element={<Delivery />} />
-   <Route path="/favorites" element={<FavoritesPage />} />
-</Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Hero />
+              <SearchSection />
+              <Testimonial />
+            </>
+          }
+        />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/delivery" element={<Delivery />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
 
       <Footer />
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
@@ -52,12 +60,12 @@ function App() {
   return (
     <FavoritesProvider>
       <RecentlyViewedProvider>
-      <CartProvider>
-        <Router>
-          <ScrollToTop />
-          <AppContent />
-        </Router>
-      </CartProvider>
+        <CartProvider>
+          <Router>
+            <ScrollToTop />
+            <AppContent />
+          </Router>
+        </CartProvider>
       </RecentlyViewedProvider>
     </FavoritesProvider>
   );
