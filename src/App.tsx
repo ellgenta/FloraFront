@@ -13,6 +13,8 @@ import { useState } from "react";
 import Testimonial from "./components/Testimonial";
 import About from "./pages/AboutUs";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import ProductPage from "./components/ProductPage";
+import { RecentlyViewedProvider } from "./contexts/RecentlyViewedContext";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -22,20 +24,22 @@ function AppContent() {
     <div className="app">
       <Header onCartClick={() => setIsCartOpen(true)} cartItemCount={getTotalItems()} />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Hero />
-              <SearchSection />
-              <Testimonial />
-            </>
-          }
-        />
-        <Route path="/catalog" element={<Catalog />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/delivery" element={<Delivery />} />
-      </Routes>
+  <Route
+    path="/"
+    element={
+      <>
+        <Hero />
+        <SearchSection />
+        <Testimonial />
+      </>
+    }
+  />
+  <Route path="/catalog" element={<Catalog />} />
+  <Route path="/product/:id" element={<ProductPage />} />
+  <Route path="/about" element={<About />} />
+  <Route path="/delivery" element={<Delivery />} />
+</Routes>
+
       <Footer />
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
@@ -45,12 +49,14 @@ function AppContent() {
 function App() {
   return (
     <FavoritesProvider>
+      <RecentlyViewedProvider>
       <CartProvider>
         <Router>
           <ScrollToTop />
           <AppContent />
         </Router>
       </CartProvider>
+      </RecentlyViewedProvider>
     </FavoritesProvider>
   );
 }
