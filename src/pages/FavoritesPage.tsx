@@ -1,6 +1,7 @@
 import ProductCard from '../components/ProductCard';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { products } from '../data/products';
+import '../styles/FavoritesPage.css';
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites();
@@ -9,14 +10,27 @@ export default function FavoritesPage() {
     favorites.includes(product.id)
   );
 
+  if (favoriteProducts.length === 0) {
+    return (
+      <section className="favorites-page">
+        <div className="favorites-page__empty">
+          <h1 className="favorites-page__title">Favorites</h1>
+          <p className="favorites-page__subtitle">
+            Your favorite products will appear here.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="favorites-page">
-      <h1>Favorites</h1>
+      <div className="favorites-page__container">
+        <h1 className="favorites-page__title favorites-page__title--top">
+          Favorites
+        </h1>
 
-      {favoriteProducts.length === 0 ? (
-        <p>Your favorite products will appear here.</p>
-      ) : (
-        <div className="products-grid">
+        <div className="favorites-page__grid">
           {favoriteProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -27,7 +41,7 @@ export default function FavoritesPage() {
             />
           ))}
         </div>
-      )}
+      </div>
     </section>
   );
 }
