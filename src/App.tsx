@@ -15,6 +15,7 @@ import About from "./pages/AboutUs";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import ProductPage from "./components/ProductPage";
 import { RecentlyViewedProvider } from "./contexts/RecentlyViewedContext";
+import FavoritesPage from './pages/FavoritesPage';
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -38,6 +39,7 @@ function AppContent() {
   <Route path="/product/:id" element={<ProductPage />} />
   <Route path="/about" element={<About />} />
   <Route path="/delivery" element={<Delivery />} />
+   <Route path="/favorites" element={<FavoritesPage />} />
 </Routes>
 
       <Footer />

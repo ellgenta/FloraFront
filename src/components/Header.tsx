@@ -1,4 +1,4 @@
-import { User, ShoppingCart } from "lucide-react";
+import { Heart, User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AuthModal from "./AuthModal.tsx";
@@ -43,25 +43,33 @@ function Header({ onCartClick, cartItemCount }: HeaderProps) {
           />
 
           <div className="header__actions">
-            <button
-              className="header__icon-button"
-              aria-label="User profile"
-              onClick={() => setAuthOpen(true)}
-            >
-              <User size={28} strokeWidth={1.8} />
-            </button>
+          <button
+            className="header__icon-button"
+            aria-label="User profile"
+            onClick={() => setAuthOpen(true)}
+          >
+            <User size={28} strokeWidth={1.8} />
+          </button>
 
-            <button
-              className="header__icon-button header__cart-button"
-              aria-label="Shopping cart"
-              onClick={onCartClick}
-            >
-              <ShoppingCart size={30} strokeWidth={1.8} />
-              {cartItemCount > 0 && (
-                <span className="cart-badge">{cartItemCount}</span>
-              )}
-            </button>
-          </div>
+          <button
+            className="header__icon-button"
+            aria-label="Favorites"
+            onClick={() => navigate("/favorites")}
+          >
+            <Heart size={28} strokeWidth={1.8} />
+          </button>
+
+          <button
+            className="header__icon-button header__cart-button"
+            aria-label="Shopping cart"
+            onClick={onCartClick}
+          >
+            <ShoppingCart size={30} strokeWidth={1.8} />
+            {cartItemCount > 0 && (
+              <span className="cart-badge">{cartItemCount}</span>
+            )}
+          </button>
+        </div>
         </div>
       </header>
 
