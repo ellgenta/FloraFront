@@ -116,11 +116,13 @@ export default function AboutUs() {
     <div className="about-values__cards">
       <div className="about-values__card">
         <div className="about-values__card-header">
-          <img
-            src="public/freshness.png"
-            alt="Freshness icon"
-            className="about-values__icon"
-          />
+          <div className="about-values__icon-box">
+            <img
+              src="public/freshness.png"
+              alt="Freshness icon"
+              className="about-values__icon about-values__icon--freshness"
+            />
+          </div>
           <h3 className="about-values__card-title">Freshness</h3>
         </div>
 
@@ -131,11 +133,13 @@ export default function AboutUs() {
 
       <div className="about-values__card">
         <div className="about-values__card-header">
-          <img
-            src="public/care.png"
-            alt="Care icon"
-            className="about-values__icon"
-          />
+          <div className="about-values__icon-box">
+            <img
+              src="public/care.png"
+              alt="Care icon"
+               className="about-values__icon about-values__icon--care"
+            />
+          </div>
           <h3 className="about-values__card-title">Care</h3>
         </div>
 
@@ -146,11 +150,13 @@ export default function AboutUs() {
 
       <div className="about-values__card">
         <div className="about-values__card-header">
-          <img
-            src="public/aesthetic.png"
-            alt="Aesthetic icon"
-            className="about-values__icon"
-          />
+          <div className="about-values__icon-box">
+            <img
+              src="public/aesthetic.png"
+              alt="Aesthetic icon"
+              className="about-values__icon about-values__icon--aesthetic"
+            />
+          </div>
           <h3 className="about-values__card-title">Aesthetics</h3>
         </div>
 
@@ -161,11 +167,13 @@ export default function AboutUs() {
 
       <div className="about-values__card">
         <div className="about-values__card-header">
-          <img
-            src="public/delivery.png"
-            alt="Delivery icon"
-            className="about-values__icon"
-          />
+          <div className="about-values__icon-box">
+            <img
+              src="public/delivery.png"
+              alt="Delivery icon"
+              className="about-values__icon about-values__icon--delivery"
+            />
+          </div>
           <h3 className="about-values__card-title">Delivery</h3>
         </div>
 
