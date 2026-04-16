@@ -22,8 +22,8 @@ function CartPage() {
           </h2>
         </div>
 
-        <div className="cart-page__content">
-          {cartItems.length === 0 ? (
+        {cartItems.length === 0 ? (
+          <div className="cart-page__content">
             <div className="cart-empty">
               <ShoppingBag size={48} strokeWidth={1.4} />
               <p>Your cart is empty</p>
@@ -34,8 +34,10 @@ function CartPage() {
                 Continue Shopping
               </button>
             </div>
-          ) : (
-            <>
+          </div>
+        ) : (
+          <div className="cart-layout">
+            <section className="cart-layout__items">
               <div className="cart-items">
                 {cartItems.map((item: CartItem) => (
                   <div key={item.id} className="cart-item">
@@ -80,14 +82,23 @@ function CartPage() {
                   </div>
                 ))}
               </div>
+            </section>
 
-              <div className="cart-summary">
-                <div className="cart-total">
-                  <span>Total:</span>
-                  <span className="total-price">${getTotalPrice().toFixed(2)}</span>
+            <aside className="cart-layout__summary">
+              <div className="cart-summary-card">
+                <h3 className="cart-summary-card__title">Order Summary</h3>
+
+                <div className="cart-summary-card__row">
+                  <span>Items</span>
+                  <span>{cartItems.length}</span>
                 </div>
 
-                <div className="cart-actions">
+                <div className="cart-summary-card__row cart-summary-card__row--total">
+                  <span>Total</span>
+                  <span>${getTotalPrice().toFixed(2)}</span>
+                </div>
+
+                <div className="cart-summary-card__actions">
                   <button className="clear-cart-btn" onClick={clearCart}>
                     Clear Cart
                   </button>
@@ -96,9 +107,9 @@ function CartPage() {
                   </button>
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </aside>
+          </div>
+        )}
       </div>
     </main>
   );
