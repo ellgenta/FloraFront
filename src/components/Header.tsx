@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 
 interface HeaderProps {
-  onCartClick: () => void;
   cartItemCount: number;
 }
 
-function Header({ onCartClick, cartItemCount }: HeaderProps) {
+function Header({ cartItemCount }: HeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -64,7 +63,7 @@ function Header({ onCartClick, cartItemCount }: HeaderProps) {
           <button
             className="header__icon-button header__cart-button"
             aria-label="Shopping cart"
-            onClick={onCartClick}
+            onClick={() => navigate("/cart")}
           >
             <ShoppingCart size={30} strokeWidth={1.8} />
             {cartItemCount > 0 && (

@@ -4,7 +4,6 @@ import Header from "./components/Header";
 import Hero from "./components/Hero";
 import SearchSection from "./components/ExploreBar";
 import Footer from "./components/Footer";
-import CartModal from "./components/CartModal";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider, useCart } from "./contexts/CartContext";
 import Catalog from "./pages/Catalog";
@@ -18,6 +17,7 @@ import { RecentlyViewedProvider } from "./contexts/RecentlyViewedContext";
 import FavoritesPage from "./pages/FavoritesPage";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
+import CartPage from "./pages/CartPage";
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -26,8 +26,7 @@ function AppContent() {
   return (
     <div className="app">
       <Header
-        onCartClick={() => setIsCartOpen(true)}
-        cartItemCount={getTotalItems()}
+       cartItemCount={getTotalItems()}
       />
 
       <Routes>
@@ -48,10 +47,11 @@ function AppContent() {
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
 
       <Footer />
-      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    
     </div>
   );
 }

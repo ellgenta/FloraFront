@@ -1,57 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
-import { useCart } from '../contexts/CartContext';
-import type { CartItem } from '../contexts/CartContext';
-import '../styles/CartModal.css';
+import { Plus, Minus, ShoppingBag } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../contexts/CartContext";
+import type { CartItem } from "../contexts/CartContext";
+import "../styles/CartPage.css";
 
-interface CartModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
+function CartPage() {
+  const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      requestAnimationFrame(() => setVisible(true));
-    } else {
-      setVisible(false);
-    }
-  }, [isOpen]);
 
   const handleCheckout = () => {
-    alert('Checkout functionality would be implemented here!');
+    alert("Checkout functionality would be implemented here!");
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className={`cart-modal-overlay ${visible ? 'cart-modal-overlay--visible' : ''}`}
-      onClick={onClose}
-    >
-      <div
-        className={`cart-modal ${visible ? 'cart-modal--visible' : ''}`}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="cart-modal-header">
-          <h2 className="cart-modal-title">
+    <main className="cart-page">
+      <div className="cart-page__container">
+        <div className="cart-page__header">
+          <h2 className="cart-page__title">
             <ShoppingBag size={22} strokeWidth={1.8} />
             Your Cart ({cartItems.length} items)
           </h2>
-          <button className="cart-modal-close" onClick={onClose} aria-label="Close">
-            <X size={20} strokeWidth={1.8} />
-          </button>
         </div>
 
-        <div className="cart-modal-content">
+        <div className="cart-page__content">
           {cartItems.length === 0 ? (
             <div className="cart-empty">
               <ShoppingBag size={48} strokeWidth={1.4} />
               <p>Your cart is empty</p>
-              <button className="cart-continue-shopping" onClick={onClose}>
+              <button
+                className="cart-continue-shopping"
+                onClick={() => navigate("/catalog")}
+              >
                 Continue Shopping
               </button>
             </div>
@@ -65,11 +44,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                       alt={item.name}
                       className="cart-item-image"
                     />
+
                     <div className="cart-item-details">
                       <h3 className="cart-item-name">{item.name}</h3>
                       <p className="cart-item-description">{item.description}</p>
                       <div className="cart-item-price">${item.price.toFixed(2)}</div>
                     </div>
+
                     <div className="cart-item-controls">
                       <div className="quantity-controls">
                         <button
@@ -78,7 +59,9 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         >
                           <Minus size={14} />
                         </button>
+
                         <span className="quantity">{item.quantity}</span>
+
                         <button
                           className="quantity-btn"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
@@ -86,6 +69,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                           <Plus size={14} />
                         </button>
                       </div>
+
                       <button
                         className="remove-btn"
                         onClick={() => removeFromCart(item.id)}
@@ -102,6 +86,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   <span>Total:</span>
                   <span className="total-price">${getTotalPrice().toFixed(2)}</span>
                 </div>
+
                 <div className="cart-actions">
                   <button className="clear-cart-btn" onClick={clearCart}>
                     Clear Cart
@@ -115,8 +100,8 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
-};
+}
 
-export default CartModal;
+export default CartPage;
