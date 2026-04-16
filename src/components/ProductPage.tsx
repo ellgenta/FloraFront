@@ -61,7 +61,6 @@ export default function ProductPage() {
           </div>
 
           <div className="product-page__info">
-            <p className="product-page__category">{product.category}</p>
             <h1 className="product-page__title">{product.name}</h1>
             <p className="product-page__price">${product.price.toFixed(2)}</p>
             <p className="product-page__description">{product.description}</p>
