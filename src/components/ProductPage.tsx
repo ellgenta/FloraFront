@@ -115,6 +115,66 @@ export default function ProductPage() {
             </div>
           </div>
         </div>
+
+        <section className="product-page__reviews">
+          <div className="product-page__reviews-header">
+            <div>
+              <h2 className="product-page__reviews-title">Customer Reviews</h2>
+              <p className="product-page__reviews-subtitle">
+                See what other customers think about this product
+              </p>
+            </div>
+
+            <div className="product-page__reviews-summary">
+              <span className="product-page__reviews-rating">4.8</span>
+              <span className="product-page__reviews-count">127 reviews</span>
+            </div>
+          </div>
+
+          <div className="product-page__reviews-grid">
+            <article className="product-page__review-card">
+              <div className="product-page__review-top">
+                <h3 className="product-page__review-name">Anna</h3>
+                <span className="product-page__review-stars">★★★★★</span>
+              </div>
+              <p className="product-page__review-text">
+                Beautiful healthy plant. It arrived in great condition and looks even better in real life.
+              </p>
+              <div className="product-page__review-reactions">
+                <span>Healthy leaves</span>
+                <span>Beautiful look</span>
+              </div>
+            </article>
+
+            <article className="product-page__review-card">
+              <div className="product-page__review-top">
+                <h3 className="product-page__review-name">Maria</h3>
+                <span className="product-page__review-stars">★★★★★</span>
+              </div>
+              <p className="product-page__review-text">
+                Very happy with this purchase. The packaging was neat and the plant feels fresh and strong.
+              </p>
+              <div className="product-page__review-reactions">
+                <span>Well packed</span>
+                <span>Fresh plant</span>
+              </div>
+            </article>
+
+            <article className="product-page__review-card">
+              <div className="product-page__review-top">
+                <h3 className="product-page__review-name">Elena</h3>
+                <span className="product-page__review-stars">★★★★☆</span>
+              </div>
+              <p className="product-page__review-text">
+                Nice plant and fast delivery. I would love the pot to be a little bigger, but overall it looks amazing.
+              </p>
+              <div className="product-page__review-reactions">
+                <span>Fast delivery</span>
+                <span>Looks amazing</span>
+              </div>
+            </article>
+          </div>
+        </section>
       </div>
     </section>
   );

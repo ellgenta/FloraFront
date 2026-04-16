@@ -253,3 +253,121 @@
     text-align: left;
   }
 }
+
+.product-page__reviews {
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid #dfe7db;
+}
+
+.product-page__reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.product-page__reviews-title {
+  margin: 0 0 8px;
+  font-size: 30px;
+  color: #2f4531;
+}
+
+.product-page__reviews-subtitle {
+  margin: 0;
+  color: #71836e;
+  font-size: 16px;
+}
+
+.product-page__reviews-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.product-page__reviews-rating {
+  font-size: 34px;
+  font-weight: 700;
+  color: #2f4531;
+  line-height: 1;
+}
+
+.product-page__reviews-count {
+  margin-top: 6px;
+  color: #71836e;
+  font-size: 15px;
+}
+
+.product-page__reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.product-page__review-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid #dde7d9;
+  border-radius: 22px;
+  padding: 22px;
+}
+
+.product-page__review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.product-page__review-name {
+  margin: 0;
+  font-size: 18px;
+  color: #2f4531;
+}
+
+.product-page__review-stars {
+  color: #e0b84f;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.product-page__review-text {
+  margin: 0 0 16px;
+  color: #617260;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.product-page__review-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-page__review-reactions span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #eef4eb;
+  color: #526550;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@media (max-width: 992px) {
+  .product-page__reviews-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-page__reviews-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .product-page__reviews-summary {
+    align-items: flex-start;
+  }
+}
