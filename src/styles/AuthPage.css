@@ -1,9 +1,9 @@
 .auth-page {
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 32px 20px;
+  align-items: flex-start;
+  padding: 56px 20px 32px;
   background: linear-gradient(180deg, #edf7ee 0%, #dae2d4 100%);
 }
 

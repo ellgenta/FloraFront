@@ -1,20 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
+import { Link} from "react-router-dom";
 import "../styles/AuthPage.css";
 
 function LoginPage() {
-  const navigate = useNavigate();
+  
 
   return (
     <main className="auth-page">
       <div className="auth-card">
-        <button
-          className="auth-card__close"
-          onClick={() => navigate("/")}
-          aria-label="Close"
-        >
-          <X size={20} strokeWidth={1.8} />
-        </button>
 
         <h2 className="auth-card__title">Welcome back</h2>
         <p className="auth-card__subtitle">Sign in to your account</p>
