@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { products } from '../data/products';
 import { getSubcategoryLabel } from '../data/subcategories';
@@ -13,6 +13,7 @@ export default function ProductPage() {
   const { cartItems, addToCart, removeFromCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
   const { setLastViewedProductId } = useRecentlyViewed();
+  const [selectedRating, setSelectedRating] = useState(0);
 
   const product = useMemo(
     () => products.find(item => item.id === id),
@@ -130,6 +131,39 @@ export default function ProductPage() {
               <span className="product-page__reviews-count">127 reviews</span>
             </div>
           </div>
+
+          <div className="product-page__review-form">
+  <h3 className="product-page__review-form-title">Share your opinion</h3>
+  <p className="product-page__review-form-subtitle">
+    Tell other customers what you think about this product
+  </p>
+
+  <div className="product-page__review-form-rating">
+  {[1, 2, 3, 4, 5].map((star) => (
+    <button
+      key={star}
+      type="button"
+      aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+      className={`product-page__review-star ${
+        star <= selectedRating ? 'product-page__review-star--active' : ''
+      }`}
+      onClick={() => setSelectedRating(star)}
+    >
+      ★
+    </button>
+  ))}
+</div>
+
+  <textarea
+    className="product-page__review-form-textarea"
+    placeholder="Write your comment here..."
+  />
+
+  <button className="product-page__review-form-submit">
+    Submit Review
+  </button>
+</div>
+
 
           <div className="product-page__reviews-grid">
             <article className="product-page__review-card">
