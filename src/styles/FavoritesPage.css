@@ -65,3 +65,21 @@
     grid-template-columns: 1fr;
   }
 }
+
+.favorites-page__button {
+  margin-top: 24px;
+  background: linear-gradient(135deg, #4f6552 0%, #3d5440 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.favorites-page__button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

@@ -1,9 +1,11 @@
 import ProductCard from '../components/ProductCard';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { products } from '../data/products';
+import { useNavigate } from 'react-router-dom';
 import '../styles/FavoritesPage.css';
 
 export default function FavoritesPage() {
+  const navigate = useNavigate();
   const { favorites } = useFavorites();
 
   const favoriteProducts = products.filter((product) =>
@@ -18,6 +20,13 @@ export default function FavoritesPage() {
           <p className="favorites-page__subtitle">
             Your favorite products will appear here.
           </p>
+
+          <button
+            className="favorites-page__button"
+            onClick={() => navigate('/catalog')}
+          >
+            Continue Shopping
+          </button>
         </div>
       </section>
     );
