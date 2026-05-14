@@ -43,5 +43,5 @@ export type CreateOrderItemRequest = {
 export type CreateOrderRequest = {
   userId: string | number;
   items: CreateOrderItemRequest[];
-  deliveryAddress?: AddressRequest;
+  deliveryAddress: AddressRequest;
 };

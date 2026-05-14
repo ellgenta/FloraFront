@@ -99,6 +99,7 @@ function CartPage() {
       });
 
       clearCart();
+      alert("Order created successfully!");
       navigate("/catalog");
     } catch (error) {
       console.error("Create order error:", error);

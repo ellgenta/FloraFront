@@ -34,11 +34,13 @@ const AdminOrders = () => {
       return orders;
     }
 
-    return orders.filter((order) =>
-      String(order.id).toLowerCase().includes(normalizedQuery) ||
-      order.customerName.toLowerCase().includes(normalizedQuery) ||
-      order.status.toLowerCase().includes(normalizedQuery)
-    );
+    return orders.filter((order) => {
+      return (
+        String(order.id).toLowerCase().includes(normalizedQuery) ||
+        order.customerName.toLowerCase().includes(normalizedQuery) ||
+        order.status.toLowerCase().includes(normalizedQuery)
+      );
+    });
   }, [orders, searchQuery]);
 
   const getStatusClassName = (status: string) => {
@@ -120,7 +122,7 @@ const AdminOrders = () => {
               <tr key={order.id}>
                 <td>#{order.id}</td>
                 <td>{order.customerName}</td>
-                <td>{order.date}</td>
+                <td>{order.date || "—"}</td>
                 <td>${order.total}</td>
                 <td>
                   <span className={getStatusClassName(order.status)}>

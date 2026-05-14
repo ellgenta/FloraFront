@@ -43,7 +43,7 @@ type BackendCreateOrderDto = {
     quantity: number;
     price: number;
   }[];
-  deliveryAddress?: {
+  deliveryAddress: {
     state: string;
     city: string;
     street: string;
@@ -117,11 +117,23 @@ const mapCreateOrderToBackendDto = (
       quantity: item.quantity,
       price: item.price,
     })),
-    deliveryAddress: order.deliveryAddress,
+    deliveryAddress: {
+      state: order.deliveryAddress.state,
+      city: order.deliveryAddress.city,
+      street: order.deliveryAddress.street,
+      house: order.deliveryAddress.house,
+      apartment: order.deliveryAddress.apartment || undefined,
+    },
   };
 };
 
 export const orderApi = {
+  getAll: async () => {
+    const data = await http<BackendOrder[]>("/api/order/all");
+
+    return data.map(mapBackendOrderToOrder);
+  },
+
   getByUserId: async (userId: string | number) => {
     const data = await http<BackendOrder[]>(`/api/order/${userId}/all`);
 
