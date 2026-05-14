@@ -1,22 +1,67 @@
 import { http } from "./http";
-import type { SiteReview } from "../types/siteReview";
+import type { SiteReview, SiteReviewCreateRequest } from "../types/siteReview";
+
+type BackendSiteReview = {
+  id: number;
+  userId: number;
+  user?: {
+    id?: number;
+    userName?: string;
+    email?: string;
+  } | null;
+  content?: string | null;
+  mark?: number;
+  createdAt?: string;
+};
+
+type BackendSiteReviewCreateDto = {
+  userId: number;
+  content: string;
+  mark: number;
+};
+
+const mapBackendSiteReviewToSiteReview = (
+  review: BackendSiteReview
+): SiteReview => {
+  return {
+    id: review.id,
+    userId: review.userId,
+    userName: review.user?.userName || `User #${review.userId}`,
+    text: review.content || "",
+    rating: review.mark ?? 0,
+    createdAt: review.createdAt,
+  };
+};
+
+const mapSiteReviewToBackendDto = (
+  review: SiteReviewCreateRequest
+): BackendSiteReviewCreateDto => {
+  return {
+    userId: Number(review.userId),
+    content: review.text,
+    mark: review.rating,
+  };
+};
 
 export const siteReviewApi = {
-  getAll: () => {
-    return http<SiteReview[]>("/api/review/site/all");
+  getAll: async () => {
+    const data = await http<BackendSiteReview[]>("/api/review/site/all");
+
+    return data.map(mapBackendSiteReviewToSiteReview);
   },
 
-  create: (review: Omit<SiteReview, "id" | "siteReviewId">) => {
-    return http<SiteReview>("/api/review/site", {
+  create: async (review: SiteReviewCreateRequest) => {
+    const data = await http<BackendSiteReview>("/api/review/site", {
       method: "POST",
-      body: JSON.stringify(review),
+      body: JSON.stringify(mapSiteReviewToBackendDto(review)),
     });
+
+    return mapBackendSiteReviewToSiteReview(data);
   },
 
   delete: (id: string | number) => {
-    return http<void>("/api/review/site", {
+    return http<void>(`/api/review/site?id=${id}`, {
       method: "DELETE",
-      body: JSON.stringify({ id }),
     });
   },
 };

@@ -1,20 +1,16 @@
 export type SiteReview = {
-  id?: string | number;
-  siteReviewId?: string | number;
-  userName?: string;
-  name?: string;
-  city?: string;
-  location?: string;
-  rating?: number;
-  text?: string;
-  message?: string;
-  comment?: string;
+  id: string | number;
+  userId?: string | number;
+  userName: string;
+  text: string;
+  rating: number;
+  createdAt?: string;
 };
 
-export type TestimonialItem = {
-  id: string | number;
-  name: string;
-  city: string;
+export type SiteReviewCreateRequest = {
+  userId: string | number;
   text: string;
-  rating?: number;
+  rating: number;
 };
+
+export type TestimonialItem = SiteReview;

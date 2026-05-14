@@ -3,7 +3,7 @@ import type { DashboardData } from "../types/dashboard";
 
 export const dashboardApi = {
   getDashboardData: () => {
-    return http<DashboardData>("/api/Admin/dashboard");
+    return http<DashboardData>("/api/admin/dashboard");
   },
 };
 

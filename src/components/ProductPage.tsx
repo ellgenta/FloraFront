@@ -103,36 +103,55 @@ export default function ProductPage() {
     }
   }, [product, setLastViewedProductId]);
 
-  const handleSubmitReview = async () => {
-    if (!product) {
-      return;
-    }
+  const getCurrentUserId = () => {
+  const userId = localStorage.getItem("userId");
 
-    if (selectedRating === 0) {
-      alert("Please select a rating");
-      return;
-    }
+  if (!userId) {
+    return null;
+  }
 
-    if (!reviewText.trim()) {
-      alert("Please write your comment");
-      return;
-    }
+  return Number(userId);
+};
 
-    try {
-      const createdReview = await productReviewApi.create({
-        productId: product.id,
-        rating: selectedRating,
-        text: reviewText.trim(),
-      });
+const handleSubmitReview = async () => {
+  if (!product) {
+    return;
+  }
 
-      setReviews((prevReviews) => [createdReview, ...prevReviews]);
-      setSelectedRating(0);
-      setReviewText("");
-    } catch (error) {
-      console.error("Create product review error:", error);
-      alert("Error while submitting review");
-    }
-  };
+  const userId = getCurrentUserId();
+
+  if (!userId) {
+    alert("Please log in before submitting a review.");
+    navigate("/login");
+    return;
+  }
+
+  if (selectedRating === 0) {
+    alert("Please select a rating");
+    return;
+  }
+
+  if (!reviewText.trim()) {
+    alert("Please write your comment");
+    return;
+  }
+
+  try {
+    const createdReview = await productReviewApi.create({
+      userId,
+      productId: product.id,
+      rating: selectedRating,
+      text: reviewText.trim(),
+    });
+
+    setReviews((prevReviews) => [createdReview, ...prevReviews]);
+    setSelectedRating(0);
+    setReviewText("");
+  } catch (error) {
+    console.error("Create product review error:", error);
+    alert("Error while submitting review");
+  }
+};
 
   if (isLoading) {
     return (

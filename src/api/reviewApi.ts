@@ -1,77 +1,54 @@
-import { http } from "./http";
-import type {
-  AdminReview,
-  ProductReview,
-  SiteReview,
-} from "../types/review";
+import { productApi } from "./productApi";
+import { productReviewApi } from "./productReviewApi";
+import { siteReviewApi } from "./siteReviewApi";
 
-const PRODUCT_REVIEW_ENDPOINT = "/api/ProductReview";
-const SITE_REVIEW_ENDPOINT = "/api/SiteReview";
-
-const mapProductReview = (review: ProductReview): AdminReview => {
-  return {
-    id: review.id,
-    source: "product",
-    type: "Product",
-    userName: review.userName || String(review.userId || "—"),
-    productName: review.productName || String(review.productId || "—"),
-    rating: review.rating,
-    text:
-      review.text ||
-      review.reviewText ||
-      review.comment ||
-      review.message ||
-      "",
-  };
-};
-
-const mapSiteReview = (review: SiteReview): AdminReview => {
-  return {
-    id: review.id,
-    source: "site",
-    type: "Site",
-    userName: review.userName || String(review.userId || "—"),
-    productName: undefined,
-    rating: undefined,
-    text:
-      review.text ||
-      review.reviewText ||
-      review.comment ||
-      review.message ||
-      "",
-  };
-};
+import type { AdminReview } from "../types/review";
 
 export const reviewApi = {
-  getAll: async () => {
-    const [productReviews, siteReviews] = await Promise.all([
-      http<ProductReview[]>(PRODUCT_REVIEW_ENDPOINT),
-      http<SiteReview[]>(SITE_REVIEW_ENDPOINT),
+  getAll: async (): Promise<AdminReview[]> => {
+    const [siteReviews, products] = await Promise.all([
+      siteReviewApi.getAll(),
+      productApi.getAll(),
     ]);
 
-    return [
-      ...productReviews.map(mapProductReview),
-      ...siteReviews.map(mapSiteReview),
-    ];
+    const productReviewGroups = await Promise.all(
+      products.map(async (product) => {
+        const reviews = await productReviewApi.getByProductId(product.id);
+
+        return reviews.map<AdminReview>((review) => ({
+          id: review.id,
+          source: "product",
+          type: "Product",
+          userName: review.userName,
+          productName: product.name,
+          rating: review.rating,
+          text: review.text,
+          createdAt: review.createdAt,
+        }));
+      })
+    );
+
+    const productReviews = productReviewGroups.flat();
+
+    const normalizedSiteReviews = siteReviews.map<AdminReview>((review) => ({
+      id: review.id,
+      source: "site",
+      type: "Site",
+      userName: review.userName,
+      productName: undefined,
+      rating: review.rating,
+      text: review.text,
+      createdAt: review.createdAt,
+    }));
+
+    return [...productReviews, ...normalizedSiteReviews];
   },
 
-  deleteProductReview: (id: string | number) => {
-    return http<void>(`${PRODUCT_REVIEW_ENDPOINT}/${id}`, {
-      method: "DELETE",
-    });
-  },
-
-  deleteSiteReview: (id: string | number) => {
-    return http<void>(`${SITE_REVIEW_ENDPOINT}/${id}`, {
-      method: "DELETE",
-    });
-  },
-
-  delete: (review: AdminReview) => {
+  delete: async (review: AdminReview) => {
     if (review.source === "product") {
-      return reviewApi.deleteProductReview(review.id);
+      return productReviewApi.delete(review.id);
     }
 
-    return reviewApi.deleteSiteReview(review.id);
+    return siteReviewApi.delete(review.id);
   },
 };

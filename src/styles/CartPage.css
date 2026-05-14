@@ -286,3 +286,24 @@
     align-items: flex-start;
   }
 }
+
+.cart-address-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cart-address-input {
+  width: 100%;
+  border: 1px solid #d8e2d2;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #2f4633;
+  background: #fbfdf9;
+  outline: none;
+}
+
+.cart-address-input:focus {
+  border-color: #2f4633;
+}
