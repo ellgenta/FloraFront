@@ -161,7 +161,7 @@ export default function Catalog() {
             products={paginatedProducts}
             cartItems={cartItems}
             onAddToCart={(product) => addToCart(product)}
-            onRemoveFromCart={(productId) => removeFromCart(String(productId))}
+            onRemoveFromCart={(itemId) => removeFromCart(itemId)}
           />
 
           {totalPages > 1 && (

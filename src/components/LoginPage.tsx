@@ -13,7 +13,8 @@ function LoginPage() {
     try {
       const response = await login({ login: loginValue, password });
       localStorage.setItem("token", response.token);
-      navigate("/"); // редирект на главную после логина
+      window.dispatchEvent(new Event("tokenChanged"));
+      navigate("/");
     } catch (err) {
       setError("Invalid login or password");
     }

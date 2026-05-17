@@ -6,7 +6,7 @@ import "../styles/ProductCard.css";
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
-  onRemoveFromCart: (productId: string | number) => void;
+  onRemoveFromCart: () => void;
   isInCart: boolean;
   isRecentlyViewed?: boolean;
 }
@@ -90,7 +90,7 @@ export default function ProductCard({
               className="product-card__btn product-card__btn--remove"
               onClick={(event) => {
                 event.stopPropagation();
-                onRemoveFromCart(product.id);
+                onRemoveFromCart();
               }}
             >
               Remove from Cart

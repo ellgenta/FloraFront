@@ -45,22 +45,20 @@ const mapSiteReviewToBackendDto = (
 
 export const siteReviewApi = {
   getAll: async () => {
-    const data = await http<BackendSiteReview[]>("/api/review/site/all");
-
+    const data = await http<BackendSiteReview[]>("/review/site/all");
     return data.map(mapBackendSiteReviewToSiteReview);
   },
 
   create: async (review: SiteReviewCreateRequest) => {
-    const data = await http<BackendSiteReview>("/api/review/site", {
+    const data = await http<BackendSiteReview>("/review/site", {
       method: "POST",
       body: JSON.stringify(mapSiteReviewToBackendDto(review)),
     });
-
     return mapBackendSiteReviewToSiteReview(data);
   },
 
   delete: (id: string | number) => {
-    return http<void>(`/api/review/site?id=${id}`, {
+    return http<void>(`/review/site?id=${id}`, {
       method: "DELETE",
     });
   },
