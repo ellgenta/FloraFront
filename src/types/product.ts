@@ -1,32 +1,27 @@
-export type ProductCategory = "plants" | "pots" | "fertilizers" | "tools";
-
 export interface Product {
-  id: string | number;
+  id: number;
   name: string;
-  category: ProductCategory | string;
-  subcategory?: string;
+  category: {
+    id: number;
+    name: string;
+  } | null;
+  subcategory: {
+    id: number;
+    name: string;
+    categoryId: number;
+  } | null;
   price: number;
   image: string;
   description: string;
-  stock?: number;
 }
 
 export type ProductCreateRequest = {
   name: string;
-  category: string;
-  subcategory?: string;
+  categoryId: number;
+  subCategoryId?: number;
   price: number;
   image: string;
   description: string;
-  stock?: number;
 };
 
-export type ProductUpdateRequest = {
-  name: string;
-  category: string;
-  subcategory?: string;
-  price: number;
-  image: string;
-  description: string;
-  stock?: number;
-};
+export type ProductUpdateRequest = ProductCreateRequest;

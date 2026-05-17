@@ -149,3 +149,9 @@
 .auth-card__switch-link:hover {
   color: #d28ab0;
 }
+
+.auth-card__error {
+  color: red;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}

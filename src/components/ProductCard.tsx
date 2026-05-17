@@ -11,12 +11,9 @@ interface ProductCardProps {
   isRecentlyViewed?: boolean;
 }
 
-const getSubcategoryLabel = (subcategory?: string) => {
-  if (!subcategory) {
-    return "";
-  }
-
-  return subcategory
+const getSubcategoryLabel = (subcategory?: { id: number; name: string; categoryId: number } | null) => {
+  if (!subcategory) return "";
+  return subcategory.name
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
@@ -35,9 +32,7 @@ export default function ProductCard({
   const productId = String(product.id);
   const liked = isFavorite(productId);
 
-  const openProductPage = () => {
-    navigate(`/product/${product.id}`);
-  };
+  const openProductPage = () => navigate(`/product/${product.id}`);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -48,9 +43,7 @@ export default function ProductCard({
 
   return (
     <div
-      className={`product-card${
-        isRecentlyViewed ? " product-card--recently-viewed" : ""
-      }`}
+      className={`product-card${isRecentlyViewed ? " product-card--recently-viewed" : ""}`}
       onClick={openProductPage}
       role="button"
       tabIndex={0}
@@ -71,9 +64,7 @@ export default function ProductCard({
 
         <button
           type="button"
-          className={`product-card__like${
-            liked ? " product-card__like--active" : ""
-          }`}
+          className={`product-card__like${liked ? " product-card__like--active" : ""}`}
           onClick={(event) => {
             event.stopPropagation();
             toggleFavorite(productId);
@@ -88,7 +79,6 @@ export default function ProductCard({
 
       <div className="product-card__content">
         <h3 className="product-card__name">{product.name}</h3>
-
         <p className="product-card__description">{product.description}</p>
 
         <div className="product-card__footer">

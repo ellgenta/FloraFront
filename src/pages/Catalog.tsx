@@ -5,7 +5,7 @@ import { productApi } from "../api/productApi";
 import { categoryApi } from "../api/categoryApi";
 
 import type { Product } from "../types/product";
-import type { SubcategoriesMap } from "../types/category";
+import type { Category, Subcategory } from "../types/category";
 
 import { useCart } from "../contexts/CartContext";
 
@@ -16,11 +16,6 @@ import "../styles/Catalog.css";
 
 type SortOption = "" | "price-asc" | "price-desc" | "discount";
 
-type CategoryOption = {
-  value: string;
-  label: string;
-};
-
 const PAGE_SIZE = 12;
 
 export default function Catalog() {
@@ -28,45 +23,35 @@ export default function Catalog() {
   const { cartItems, addToCart, removeFromCart } = useCart();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [subcategories, setSubcategories] = useState<SubcategoriesMap>({});
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
-    const cat = (location.state as { category?: string } | null)?.category;
-    return cat ? [cat] : [];
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>(() => {
+    const catId = (location.state as { categoryId?: number } | null)?.categoryId;
+    return catId ? [catId] : [];
   });
+  const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<number[]>([]);
 
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [sortBy, setSortBy] = useState<SortOption>("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const categories: CategoryOption[] = useMemo(() => {
-    return Object.keys(subcategories).map((category) => ({
-      value: category,
-      label: category.charAt(0).toUpperCase() + category.slice(1),
-    }));
-  }, [subcategories]);
-
-  const allSubcategoryValues = useMemo(() => {
-    return Object.values(subcategories)
-      .flat()
-      .map((subcategory) => subcategory.value);
-  }, [subcategories]);
 
   const loadCatalogData = async () => {
     try {
       setIsLoading(true);
       setError("");
 
-      const [productsData, subcategoriesData] = await Promise.all([
+      const [productsData, categoriesData, subcategoriesData] = await Promise.all([
         productApi.getAll(),
-        categoryApi.getSubcategories(),
+        categoryApi.getAll(),
+        categoryApi.getAllSubcategories(),
       ]);
 
       setProducts(productsData);
+      setCategories(categoriesData);
       setSubcategories(subcategoriesData);
     } catch (error) {
       console.error("Load catalog data error:", error);
@@ -81,116 +66,58 @@ export default function Catalog() {
   }, []);
 
   useEffect(() => {
-    const cat = (location.state as { category?: string } | null)?.category;
-
-    if (cat) {
-      setSelectedCategories([cat]);
+    const catId = (location.state as { categoryId?: number } | null)?.categoryId;
+    if (catId) {
+      setSelectedCategoryIds([catId]);
       setCurrentPage(1);
     }
   }, [location.state]);
 
-  const toggleCategory = (cat: string) => {
+  const toggleCategory = (id: number) => {
     setCurrentPage(1);
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+    // Снимаем подкатегории этой категории если категория снята
+    setSelectedSubcategoryIds((prev) =>
+      prev.filter((subId) => {
+        const sub = subcategories.find((s) => s.id === subId);
+        return sub?.categoryId !== id;
+      })
+    );
+  };
 
-    setSelectedCategories((prev) => {
-      const isSubcategory = allSubcategoryValues.includes(cat);
-
-      if (prev.includes(cat)) {
-        const subsToRemove =
-          subcategories[cat]?.map((subcategory) => subcategory.value) ?? [];
-
-        return prev.filter(
-          (category) => category !== cat && !subsToRemove.includes(category)
-        );
-      }
-
-      if (isSubcategory) {
-        const parentCategory = Object.entries(subcategories).find(([, subs]) =>
-          subs.some((subcategory) => subcategory.value === cat)
-        )?.[0];
-
-        const next = [...prev, cat];
-
-        if (parentCategory && !next.includes(parentCategory)) {
-          next.push(parentCategory);
-        }
-
-        return next;
-      }
-
-      return [...prev, cat];
-    });
+  const toggleSubcategory = (id: number) => {
+    setCurrentPage(1);
+    setSelectedSubcategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    );
   };
 
   const filteredProducts = useMemo(() => {
     return products
       .filter((product) => {
-        if (selectedCategories.length === 0) {
-          return true;
-        }
+        if (selectedCategoryIds.length === 0) return true;
+        if (!product.category) return false;
 
-        const activeSubcategories = selectedCategories.filter((category) =>
-          allSubcategoryValues.includes(category)
-        );
+        const categoryMatch = selectedCategoryIds.includes(product.category.id);
+        if (!categoryMatch) return false;
 
-        const activeCategories = selectedCategories.filter(
-          (category) => !allSubcategoryValues.includes(category)
-        );
+        if (selectedSubcategoryIds.length === 0) return true;
+        if (!product.subcategory) return false;
 
-        const categoryMatch = activeCategories.includes(product.category);
-
-        if (!categoryMatch) {
-          return false;
-        }
-
-        const subsForThisCategory =
-          subcategories[product.category]?.map(
-            (subcategory) => subcategory.value
-          ) ?? [];
-
-        const activeSubsForThisCategory = activeSubcategories.filter(
-          (subcategory) => subsForThisCategory.includes(subcategory)
-        );
-
-        if (activeSubsForThisCategory.length > 0) {
-          return product.subcategory
-            ? activeSubsForThisCategory.includes(product.subcategory)
-            : false;
-        }
-
-        return true;
+        return selectedSubcategoryIds.includes(product.subcategory.id);
       })
-      .filter(
-        (product) => product.price >= minPrice && product.price <= maxPrice
-      )
+      .filter((product) => product.price >= minPrice && product.price <= maxPrice)
       .sort((a, b) => {
-        if (sortBy === "price-asc") {
-          return a.price - b.price;
-        }
-
-        if (sortBy === "price-desc") {
-          return b.price - a.price;
-        }
-
+        if (sortBy === "price-asc") return a.price - b.price;
+        if (sortBy === "price-desc") return b.price - a.price;
         return 0;
       });
-  }, [
-    products,
-    selectedCategories,
-    allSubcategoryValues,
-    subcategories,
-    minPrice,
-    maxPrice,
-    sortBy,
-  ]);
+  }, [products, selectedCategoryIds, selectedSubcategoryIds, minPrice, maxPrice, sortBy]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredProducts.length / PAGE_SIZE)
-  );
-
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
-
   const paginatedProducts = filteredProducts.slice(
     (safePage - 1) * PAGE_SIZE,
     safePage * PAGE_SIZE
@@ -201,33 +128,14 @@ export default function Catalog() {
     setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0);
   };
 
-  if (isLoading) {
-    return (
-      <div className="catalog">
-        <div className="catalog__inner">
-          <main className="catalog__main">
-            <p>Loading catalog...</p>
-          </main>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="catalog"><div className="catalog__inner"><main className="catalog__main"><p>Loading catalog...</p></main></div></div>;
 
-  if (error) {
-    return (
-      <div className="catalog">
-        <div className="catalog__inner">
-          <main className="catalog__main">
-            <p>{error}</p>
-
-            <button type="button" onClick={loadCatalogData}>
-              Try Again
-            </button>
-          </main>
-        </div>
-      </div>
-    );
-  }
+  if (error) return (
+    <div className="catalog"><div className="catalog__inner"><main className="catalog__main">
+      <p>{error}</p>
+      <button type="button" onClick={loadCatalogData}>Try Again</button>
+    </main></div></div>
+  );
 
   return (
     <div className="catalog">
@@ -236,31 +144,25 @@ export default function Catalog() {
           <FilterSidebar
             minPrice={minPrice}
             maxPrice={maxPrice}
-            onPriceChange={(min, max) => {
-              setMinPrice(min);
-              setMaxPrice(max);
-              setCurrentPage(1);
-            }}
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            sortBy={sortBy}
-            onSortChange={(sortOption) => {
-              setSortBy(sortOption);
-              setCurrentPage(1);
-            }}
+            onPriceChange={(min, max) => { setMinPrice(min); setMaxPrice(max); setCurrentPage(1); }}
             categories={categories}
             subcategories={subcategories}
+            selectedCategoryIds={selectedCategoryIds}
+            selectedSubcategoryIds={selectedSubcategoryIds}
+            onToggleCategory={toggleCategory}
+            onToggleSubcategory={toggleSubcategory}
+            sortBy={sortBy}
+            onSortChange={(s) => { setSortBy(s); setCurrentPage(1); }}
           />
         </aside>
 
         <main className="catalog__main">
-         <ProductList
-  products={paginatedProducts}
-  cartItems={cartItems}
-  onAddToCart={(product) => addToCart(product)}
-  onRemoveFromCart={(productId) => removeFromCart(String(productId))}
-/>
-
+          <ProductList
+            products={paginatedProducts}
+            cartItems={cartItems}
+            onAddToCart={(product) => addToCart(product)}
+            onRemoveFromCart={(productId) => removeFromCart(String(productId))}
+          />
 
           {totalPages > 1 && (
             <div className="catalog__pagination">
@@ -268,37 +170,23 @@ export default function Catalog() {
                 className="catalog__pagination-btn catalog__pagination-btn--arrow"
                 onClick={() => handlePageChange(safePage - 1)}
                 disabled={safePage === 1}
-                aria-label="Previous page"
-              >
-                ‹
-              </button>
+              >‹</button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    className={`catalog__pagination-btn${
-                      page === safePage
-                        ? " catalog__pagination-btn--active"
-                        : ""
-                    }`}
-                    onClick={() => handlePageChange(page)}
-                    aria-label={`Page ${page}`}
-                    aria-current={page === safePage ? "page" : undefined}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  className={`catalog__pagination-btn${page === safePage ? " catalog__pagination-btn--active" : ""}`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              ))}
 
               <button
                 className="catalog__pagination-btn catalog__pagination-btn--arrow"
                 onClick={() => handlePageChange(safePage + 1)}
                 disabled={safePage === totalPages}
-                aria-label="Next page"
-              >
-                ›
-              </button>
+              >›</button>
             </div>
           )}
         </main>
