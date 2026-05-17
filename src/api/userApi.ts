@@ -1,76 +1,58 @@
 import { http } from "./http";
-import type { User, UserCreateRequest, UserUpdateRequest } from "../types/user";
+import type { User, UserUpdateRequest } from "../types/user";
 
 type BackendUser = {
   id: number;
   userName?: string | null;
-  password?: string | null;
   email?: string | null;
-  orders?: unknown[] | null;
+  gender?: number;
+  defaultAddress?: {
+    state: string;
+    city: string;
+    street: string;
+    house: string;
+    apartment?: string;
+  } | null;
+  defaultPaymentMethod?: number | null;
   isActive?: boolean;
 };
 
-type BackendUserCreateDto = {
-  userName?: string;
-  password?: string;
-  email?: string;
-};
-
-const mapBackendUserToUser = (user: BackendUser): User => {
-  return {
-    id: user.id,
-    name: user.userName || "Unknown user",
-    email: user.email || "",
-    role: user.isActive === false ? "Inactive" : "User",
-    ordersCount: user.orders?.length ?? 0,
-    isActive: user.isActive,
-  };
-};
-
-const mapUserToBackendDto = (
-  user: UserCreateRequest | UserUpdateRequest
-): BackendUserCreateDto => {
-  return {
-    userName: user.name,
-    email: user.email,
-    password: user.password,
-  };
-};
+const mapBackendUserToUser = (user: BackendUser): User => ({
+  id: user.id,
+  name: user.userName || "Unknown user",
+  email: user.email || "",
+  gender: user.gender ?? 0,
+  defaultAddress: user.defaultAddress ?? null,
+  defaultPaymentMethod: user.defaultPaymentMethod ?? null,
+  role: user.isActive === false ? "Inactive" : "User",
+  isActive: user.isActive,
+});
 
 export const userApi = {
   getAll: async () => {
-    const data = await http<BackendUser[]>("/api/users/all");
-
+    const data = await http<BackendUser[]>("/users/all");
     return data.map(mapBackendUserToUser);
   },
 
-  getById: async (id: string | number) => {
-    const data = await http<BackendUser>(`/api/users/${id}`);
-
+  getById: async (id: number) => {
+    const data = await http<BackendUser>(`/users/${id}`);
     return mapBackendUserToUser(data);
   },
 
-  create: async (user: UserCreateRequest) => {
-    const data = await http<BackendUser>("/api/users", {
-      method: "POST",
-      body: JSON.stringify(mapUserToBackendDto(user)),
-    });
-
-    return mapBackendUserToUser(data);
-  },
-
-  update: async (id: string | number, user: UserUpdateRequest) => {
-    const data = await http<BackendUser>(`/api/users/${id}`, {
+  update: async (id: number, user: UserUpdateRequest) => {
+    const data = await http<BackendUser>(`/users/${id}`, {
       method: "PUT",
-      body: JSON.stringify(mapUserToBackendDto(user)),
+      body: JSON.stringify({
+        userName: user.name,
+        email: user.email,
+        password: user.password,
+        gender: user.gender,
+        defaultAddress: user.defaultAddress,
+        defaultPaymentMethod: user.defaultPaymentMethod,
+      }),
     });
-
     return mapBackendUserToUser(data);
   },
 
-  delete: (id: string | number) => {
-    return http<void>(`/api/users/${id}`, {
-      method: "DELETE",
-    });
-  },
+  delete: (id: number) => http<void>(`/users/${id}`, { method: "DELETE" }),
 };

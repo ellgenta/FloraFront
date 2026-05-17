@@ -1,30 +1,11 @@
 import { http } from "./http";
-import type {
-  CreateOrderRequest,
-  Order,
-  OrderStatus,
-  OrderStatusCode,
-} from "../types/order";
-
-type BackendOrderItem = {
-  id?: number;
-  orderId?: number;
-  productId: number;
-  quantity: number;
-  price: number;
-};
+import type { Order, CreateOrderRequest } from "../types/order";
 
 type BackendOrder = {
-  createdAt?: string;
-  updatedAt?: string;
   id: number;
   userId: number;
-  user?: {
-    id?: number;
-    userName?: string;
-    email?: string;
-  } | null;
-  items?: BackendOrderItem[] | null;
+  createdAt?: string;
+  items?: { productId: number; quantity: number; price: number }[] | null;
   totalPrice?: number;
   deliveryAddress?: {
     state: string;
@@ -33,138 +14,53 @@ type BackendOrder = {
     house: string;
     apartment?: string;
   };
-  status?: OrderStatusCode;
+  status?: number;
 };
 
-type BackendCreateOrderDto = {
-  userId: number;
-  items: {
-    productId: number;
-    quantity: number;
-    price: number;
-  }[];
-  deliveryAddress: {
-    state: string;
-    city: string;
-    street: string;
-    house: string;
-    apartment?: string;
-  };
-};
-
-const orderStatusMap: Record<number, OrderStatus> = {
-  0: "New",
-  1: "Processing",
-  2: "Completed",
-  3: "Cancelled",
-  4: "Delivered",
-};
-
-const reverseOrderStatusMap: Record<string, number> = {
-  New: 0,
-  Processing: 1,
-  Completed: 2,
-  Cancelled: 3,
-  Delivered: 4,
-};
-
-const mapOrderStatusToFrontend = (
-  status: OrderStatusCode | undefined
-): OrderStatus => {
-  if (status === undefined || status === null) {
-    return "New";
-  }
-
-  return orderStatusMap[status] ?? "New";
-};
-
-const mapOrderStatusToBackend = (status: OrderStatus | number): number => {
-  if (typeof status === "number") {
-    return status;
-  }
-
-  return reverseOrderStatusMap[status] ?? 0;
-};
-
-const mapBackendOrderToOrder = (order: BackendOrder): Order => {
-  return {
-    id: order.id,
-    userId: order.userId,
-    customerName: order.user?.userName || `User #${order.userId}`,
-    date: order.createdAt
-      ? new Date(order.createdAt).toLocaleDateString()
-      : "",
-    total: order.totalPrice ?? 0,
-    status: mapOrderStatusToFrontend(order.status),
-    items:
-      order.items?.map((item) => ({
-        id: item.id,
-        productId: item.productId,
-        quantity: item.quantity,
-        price: item.price,
-      })) ?? [],
-    deliveryAddress: order.deliveryAddress,
-  };
-};
-
-const mapCreateOrderToBackendDto = (
-  order: CreateOrderRequest
-): BackendCreateOrderDto => {
-  return {
-    userId: Number(order.userId),
-    items: order.items.map((item) => ({
-      productId: Number(item.productId),
-      quantity: item.quantity,
-      price: item.price,
-    })),
-    deliveryAddress: {
-      state: order.deliveryAddress.state,
-      city: order.deliveryAddress.city,
-      street: order.deliveryAddress.street,
-      house: order.deliveryAddress.house,
-      apartment: order.deliveryAddress.apartment || undefined,
-    },
-  };
-};
+const mapBackendOrderToOrder = (order: BackendOrder): Order => ({
+  id: order.id,
+  userId: order.userId,
+  customerName: `User #${order.userId}`,
+  date: order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "—",
+  items: order.items?.map((item) => ({
+    productId: item.productId,
+    quantity: item.quantity,
+    price: item.price,
+  })) ?? [],
+  totalPrice: order.totalPrice ?? 0,
+  total: order.totalPrice ?? 0,
+  deliveryAddress: order.deliveryAddress ?? { state: "", city: "", street: "", house: "" },
+  status: order.status ?? 0,
+});
 
 export const orderApi = {
   getAll: async () => {
-    const data = await http<BackendOrder[]>("/api/order/all");
-
+    const data = await http<BackendOrder[]>("/order/all");
     return data.map(mapBackendOrderToOrder);
   },
 
-  getByUserId: async (userId: string | number) => {
-    const data = await http<BackendOrder[]>(`/api/order/${userId}/all`);
-
+  getByUserId: async (userId: number) => {
+    const data = await http<BackendOrder[]>(`/order/${userId}/all`);
     return data.map(mapBackendOrderToOrder);
   },
 
-  getById: async (id: string | number) => {
-    const data = await http<BackendOrder>(`/api/order/${id}`);
-
+  getById: async (id: number) => {
+    const data = await http<BackendOrder>(`/order/${id}`);
     return mapBackendOrderToOrder(data);
   },
 
   create: async (order: CreateOrderRequest) => {
-    const data = await http<BackendOrder>("/api/order", {
+    const data = await http<BackendOrder>("/order", {
       method: "POST",
-      body: JSON.stringify(mapCreateOrderToBackendDto(order)),
+      body: JSON.stringify(order),
     });
-
     return mapBackendOrderToOrder(data);
   },
 
-  updateStatus: async (id: string | number, status: OrderStatus | number) => {
-    const backendStatus = mapOrderStatusToBackend(status);
-
-    const data = await http<BackendOrder>(
-      `/api/order/${id}/status?newStatus=${backendStatus}`,
-      {
-        method: "PUT",
-      }
-    );
-
+  updateStatus: async (id: number, newStatus: number) => {
+    const data = await http<BackendOrder>(`/order/${id}/status?newStatus=${newStatus}`, {
+      method: "PUT",
+    });
     return mapBackendOrderToOrder(data);
   },
 };

@@ -1,13 +1,23 @@
 import { Heart, User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import "../styles/Header.css";
 
 interface HeaderProps {
   cartItemCount: number;
 }
 
+const isLoggedIn = () => !!localStorage.getItem("token");
+
 function Header({ cartItemCount }: HeaderProps) {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate("/catalog", { state: { searchQuery: searchQuery.trim() } });
+    }
+  };
 
   return (
     <header className="header">
@@ -41,13 +51,16 @@ function Header({ cartItemCount }: HeaderProps) {
           type="text"
           placeholder="Search by product name..."
           className="header__search-input"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearch}
         />
 
         <div className="header__actions">
           <button
             className="header__icon-button"
             aria-label="User profile"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(isLoggedIn() ? "/profile" : "/login")}
           >
             <User size={28} strokeWidth={1.8} />
           </button>

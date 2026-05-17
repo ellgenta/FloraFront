@@ -13,7 +13,7 @@ export const reviewApi = {
 
     const productReviewGroups = await Promise.all(
       products.map(async (product) => {
-        const reviews = await productReviewApi.getByProductId(product.id);
+        const reviews = await productReviewApi.getByProductId(Number(product.id));
 
         return reviews.map<AdminReview>((review) => ({
           id: review.id,
@@ -46,9 +46,9 @@ export const reviewApi = {
 
   delete: async (review: AdminReview) => {
     if (review.source === "product") {
-      return productReviewApi.delete(review.id);
+      return productReviewApi.delete(Number(review.id));
     }
 
-    return siteReviewApi.delete(review.id);
+    return siteReviewApi.delete(Number(review.id));
   },
 };

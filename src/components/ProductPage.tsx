@@ -13,12 +13,9 @@ import { useRecentlyViewed } from "../contexts/RecentlyViewedContext";
 
 import "../styles/ProductPage.css";
 
-const getSubcategoryLabel = (subcategory?: string) => {
-  if (!subcategory) {
-    return "";
-  }
-
-  return subcategory
+const getSubcategoryLabel = (subcategory?: { id: number; name: string; categoryId: number } | null) => {
+  if (!subcategory) return "";
+  return subcategory.name
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
@@ -27,6 +24,18 @@ const getSubcategoryLabel = (subcategory?: string) => {
 const getStars = (rating: number) => {
   const roundedRating = Math.round(rating);
   return "★".repeat(roundedRating) + "☆".repeat(5 - roundedRating);
+};
+
+const getUserIdFromToken = (): number | null => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const userId = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+    return userId ? Number(userId) : null;
+  } catch {
+    return null;
+  }
 };
 
 export default function ProductPage() {
@@ -49,10 +58,7 @@ export default function ProductPage() {
   const productId = product ? String(product.id) : "";
 
   const averageRating = useMemo(() => {
-    if (reviews.length === 0) {
-      return 0;
-    }
-
+    if (reviews.length === 0) return 0;
     const total = reviews.reduce((sum, review) => sum + review.rating, 0);
     return Number((total / reviews.length).toFixed(1));
   }, [reviews]);
@@ -63,12 +69,10 @@ export default function ProductPage() {
       setIsLoading(false);
       return;
     }
-
     try {
       setIsLoading(true);
       setError("");
-
-      const data = await productApi.getById(id);
+      const data = await productApi.getById(Number(id));
       setProduct(data);
     } catch (error) {
       console.error("Load product error:", error);
@@ -78,10 +82,9 @@ export default function ProductPage() {
     }
   };
 
-  const loadReviews = async (currentProductId: string | number) => {
+  const loadReviews = async (currentProductId: number) => {
     try {
       setReviewsLoading(true);
-
       const data = await productReviewApi.getByProductId(currentProductId);
       setReviews(data);
     } catch (error) {
@@ -101,57 +104,46 @@ export default function ProductPage() {
       setLastViewedProductId(String(product.id));
       loadReviews(product.id);
     }
-  }, [product, setLastViewedProductId]);
+  }, [product]);
 
-  const getCurrentUserId = () => {
-  const userId = localStorage.getItem("userId");
+  const handleSubmitReview = async () => {
+    if (!product) return;
 
-  if (!userId) {
-    return null;
-  }
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      alert("Please log in before submitting a review.");
+      navigate("/login");
+      return;
+    }
+    if (selectedRating === 0) {
+      alert("Please select a rating");
+      return;
+    }
+    if (!reviewText.trim()) {
+      alert("Please write your comment");
+      return;
+    }
 
-  return Number(userId);
-};
+    try {
+      const createdReview = await productReviewApi.create({
+        userId,
+        productId: product.id,
+        rating: selectedRating,
+        text: reviewText.trim(),
+      });
+      setReviews((prev) => [createdReview, ...prev]);
+      setSelectedRating(0);
+      setReviewText("");
+    } catch (error) {
+      console.error("Create product review error:", error);
+      alert("Error while submitting review");
+    }
+  };
 
-const handleSubmitReview = async () => {
-  if (!product) {
-    return;
-  }
-
-  const userId = getCurrentUserId();
-
-  if (!userId) {
-    alert("Please log in before submitting a review.");
-    navigate("/login");
-    return;
-  }
-
-  if (selectedRating === 0) {
-    alert("Please select a rating");
-    return;
-  }
-
-  if (!reviewText.trim()) {
-    alert("Please write your comment");
-    return;
-  }
-
-  try {
-    const createdReview = await productReviewApi.create({
-      userId,
-      productId: product.id,
-      rating: selectedRating,
-      text: reviewText.trim(),
-    });
-
-    setReviews((prevReviews) => [createdReview, ...prevReviews]);
-    setSelectedRating(0);
-    setReviewText("");
-  } catch (error) {
-    console.error("Create product review error:", error);
-    alert("Error while submitting review");
-  }
-};
+  // Находим cartItem для этого продукта
+  const cartItem = cartItems.find((item) => item.productId === product?.id);
+  const isInCart = !!cartItem;
+  const liked = isFavorite(productId);
 
   if (isLoading) {
     return (
@@ -169,13 +161,9 @@ const handleSubmitReview = async () => {
         <div className="product-page__container">
           <h1 className="product-page__title">Product not found</h1>
           <p className="product-page__description">
-            We couldn’t find the product you’re looking for.
+            We couldn't find the product you're looking for.
           </p>
-
-          <button
-            className="product-page__back-btn"
-            onClick={() => navigate("/catalog")}
-          >
+          <button className="product-page__back-btn" onClick={() => navigate("/catalog")}>
             Back to Catalog
           </button>
         </div>
@@ -183,19 +171,10 @@ const handleSubmitReview = async () => {
     );
   }
 
-  const liked = isFavorite(productId);
-
-  const isInCart = cartItems.some(
-    (item) => String(item.id) === String(product.id)
-  );
-
   return (
     <section className="product-page">
       <div className="product-page__container">
-        <button
-          className="product-page__back-btn"
-          onClick={() => navigate("/catalog")}
-        >
+        <button className="product-page__back-btn" onClick={() => navigate("/catalog")}>
           ← Back to Catalog
         </button>
 
@@ -210,18 +189,14 @@ const handleSubmitReview = async () => {
 
           <div className="product-page__info">
             <h1 className="product-page__title">{product.name}</h1>
-            <p className="product-page__price">
-              ${product.price.toFixed(2)}
-            </p>
-            <p className="product-page__description">
-              {product.description}
-            </p>
+            <p className="product-page__price">${product.price.toFixed(2)}</p>
+            <p className="product-page__description">{product.description}</p>
 
             <div className="product-page__actions">
               {isInCart ? (
                 <button
                   className="product-page__btn product-page__btn--remove"
-                  onClick={() => removeFromCart(product.id)}
+                  onClick={() => cartItem && removeFromCart(cartItem.id)}
                 >
                   Remove from Cart
                 </button>
@@ -235,9 +210,7 @@ const handleSubmitReview = async () => {
               )}
 
               <button
-                className={`product-page__favorite-action${
-                  liked ? " product-page__favorite-action--active" : ""
-                }`}
+                className={`product-page__favorite-action${liked ? " product-page__favorite-action--active" : ""}`}
                 onClick={() => toggleFavorite(productId)}
                 aria-label={liked ? "Remove from favorites" : "Add to favorites"}
               >
@@ -251,7 +224,7 @@ const handleSubmitReview = async () => {
               <div className="product-page__detail">
                 <span className="product-page__detail-label">Category</span>
                 <span className="product-page__detail-value">
-                  {product.category}
+                  {product.category?.name ?? "—"}
                 </span>
               </div>
 
@@ -263,13 +236,6 @@ const handleSubmitReview = async () => {
                   </span>
                 </div>
               )}
-
-              <div className="product-page__detail">
-                <span className="product-page__detail-label">Availability</span>
-                <span className="product-page__detail-value">
-                  {product.stock && product.stock > 0 ? "In stock" : "Out of stock"}
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -282,22 +248,14 @@ const handleSubmitReview = async () => {
                 See what other customers think about this product
               </p>
             </div>
-
             <div className="product-page__reviews-summary">
-              <span className="product-page__reviews-rating">
-                {averageRating || "—"}
-              </span>
-              <span className="product-page__reviews-count">
-                {reviews.length} reviews
-              </span>
+              <span className="product-page__reviews-rating">{averageRating || "—"}</span>
+              <span className="product-page__reviews-count">{reviews.length} reviews</span>
             </div>
           </div>
 
           <div className="product-page__review-form">
-            <h3 className="product-page__review-form-title">
-              Share your opinion
-            </h3>
-
+            <h3 className="product-page__review-form-title">Share your opinion</h3>
             <p className="product-page__review-form-subtitle">
               Tell other customers what you think about this product
             </p>
@@ -308,11 +266,7 @@ const handleSubmitReview = async () => {
                   key={star}
                   type="button"
                   aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                  className={`product-page__review-star ${
-                    star <= selectedRating
-                      ? "product-page__review-star--active"
-                      : ""
-                  }`}
+                  className={`product-page__review-star${star <= selectedRating ? " product-page__review-star--active" : ""}`}
                   onClick={() => setSelectedRating(star)}
                 >
                   ★
@@ -324,7 +278,7 @@ const handleSubmitReview = async () => {
               className="product-page__review-form-textarea"
               placeholder="Write your comment here..."
               value={reviewText}
-              onChange={(event) => setReviewText(event.target.value)}
+              onChange={(e) => setReviewText(e.target.value)}
             />
 
             <button
@@ -337,34 +291,24 @@ const handleSubmitReview = async () => {
           </div>
 
           <div className="product-page__reviews-grid">
-            {reviewsLoading && (
-              <p className="product-page__description">Loading reviews...</p>
-            )}
+            {reviewsLoading && <p className="product-page__description">Loading reviews...</p>}
 
-            {!reviewsLoading &&
-              reviews.map((review) => (
-                <article
-                  key={review.id}
-                  className="product-page__review-card"
-                >
-                  <div className="product-page__review-top">
-                    <h3 className="product-page__review-name">
-                      {review.userName || "Customer"}
-                    </h3>
-
-                    <span className="product-page__review-stars">
-                      {getStars(review.rating)}
-                    </span>
-                  </div>
-
-                  <p className="product-page__review-text">{review.text}</p>
-                </article>
-              ))}
+            {!reviewsLoading && reviews.map((review) => (
+              <article key={review.id} className="product-page__review-card">
+                <div className="product-page__review-top">
+                  <h3 className="product-page__review-name">
+                    {review.userName || "Customer"}
+                  </h3>
+                  <span className="product-page__review-stars">
+                    {getStars(review.rating)}
+                  </span>
+                </div>
+                <p className="product-page__review-text">{review.text}</p>
+              </article>
+            ))}
 
             {!reviewsLoading && reviews.length === 0 && (
-              <p className="product-page__description">
-                No reviews yet.
-              </p>
+              <p className="product-page__description">No reviews yet.</p>
             )}
           </div>
         </section>

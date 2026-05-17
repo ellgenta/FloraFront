@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { productApi } from "../api/productApi";
@@ -31,6 +31,9 @@ export default function Catalog() {
     return catId ? [catId] : [];
   });
   const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState(() => {
+    return (location.state as { searchQuery?: string } | null)?.searchQuery ?? "";
+  });
 
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
@@ -39,82 +42,84 @@ export default function Catalog() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadCatalogData = async () => {
-    try {
-      setIsLoading(true);
-      setError("");
-
-      const [productsData, categoriesData, subcategoriesData] = await Promise.all([
-        productApi.getAll(),
-        categoryApi.getAll(),
-        categoryApi.getAllSubcategories(),
-      ]);
-
-      setProducts(productsData);
-      setCategories(categoriesData);
-      setSubcategories(subcategoriesData);
-    } catch (error) {
-      console.error("Load catalog data error:", error);
-      setError("Failed to load catalog data");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadCatalogData();
+    Promise.all([categoryApi.getAll(), categoryApi.getAllSubcategories()])
+      .then(([cats, subs]) => {
+        setCategories(cats);
+        setSubcategories(subs);
+      })
+      .catch((err) => console.error("Load categories error:", err));
   }, []);
 
   useEffect(() => {
-    const catId = (location.state as { categoryId?: number } | null)?.categoryId;
-    if (catId) {
-      setSelectedCategoryIds([catId]);
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        let data: Product[];
+
+        if (selectedCategoryIds.length > 0 || selectedSubcategoryIds.length > 0) {
+          data = await productApi.filter(selectedCategoryIds, selectedSubcategoryIds);
+        } else {
+          data = await productApi.getAll();
+        }
+
+        setProducts(data);
+        setCurrentPage(1);
+      } catch (err) {
+        console.error("Load products error:", err);
+        setError("Failed to load products");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, [selectedCategoryIds, selectedSubcategoryIds]);
+
+  useEffect(() => {
+    const state = location.state as { categoryId?: number; searchQuery?: string } | null;
+
+    if (state?.categoryId) {
+      setSelectedCategoryIds([state.categoryId]);
+      setSelectedSubcategoryIds([]);
+    }
+
+    if (state?.searchQuery !== undefined) {
+      setSearchQuery(state.searchQuery);
       setCurrentPage(1);
     }
   }, [location.state]);
 
   const toggleCategory = (id: number) => {
-    setCurrentPage(1);
     setSelectedCategoryIds((prev) =>
       prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
     );
-    // Снимаем подкатегории этой категории если категория снята
     setSelectedSubcategoryIds((prev) =>
       prev.filter((subId) => {
         const sub = subcategories.find((s) => s.id === subId);
         return sub?.categoryId !== id;
       })
     );
+    setCurrentPage(1);
   };
 
   const toggleSubcategory = (id: number) => {
-    setCurrentPage(1);
     setSelectedSubcategoryIds((prev) =>
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
+    setCurrentPage(1);
   };
 
-  const filteredProducts = useMemo(() => {
-    return products
-      .filter((product) => {
-        if (selectedCategoryIds.length === 0) return true;
-        if (!product.category) return false;
-
-        const categoryMatch = selectedCategoryIds.includes(product.category.id);
-        if (!categoryMatch) return false;
-
-        if (selectedSubcategoryIds.length === 0) return true;
-        if (!product.subcategory) return false;
-
-        return selectedSubcategoryIds.includes(product.subcategory.id);
-      })
-      .filter((product) => product.price >= minPrice && product.price <= maxPrice)
-      .sort((a, b) => {
-        if (sortBy === "price-asc") return a.price - b.price;
-        if (sortBy === "price-desc") return b.price - a.price;
-        return 0;
-      });
-  }, [products, selectedCategoryIds, selectedSubcategoryIds, minPrice, maxPrice, sortBy]);
+  const filteredProducts = products
+    .filter((p) => !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((p) => p.price >= minPrice && p.price <= maxPrice)
+    .sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      return 0;
+    });
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
@@ -128,12 +133,10 @@ export default function Catalog() {
     setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0);
   };
 
-  if (isLoading) return <div className="catalog"><div className="catalog__inner"><main className="catalog__main"><p>Loading catalog...</p></main></div></div>;
-
   if (error) return (
     <div className="catalog"><div className="catalog__inner"><main className="catalog__main">
       <p>{error}</p>
-      <button type="button" onClick={loadCatalogData}>Try Again</button>
+      <button type="button" onClick={() => setError("")}>Try Again</button>
     </main></div></div>
   );
 
@@ -157,14 +160,18 @@ export default function Catalog() {
         </aside>
 
         <main className="catalog__main">
-          <ProductList
-            products={paginatedProducts}
-            cartItems={cartItems}
-            onAddToCart={(product) => addToCart(product)}
-            onRemoveFromCart={(itemId) => removeFromCart(itemId)}
-          />
+          {isLoading ? (
+            <p>Loading products...</p>
+          ) : (
+            <ProductList
+              products={paginatedProducts}
+              cartItems={cartItems}
+              onAddToCart={(product) => addToCart(product)}
+              onRemoveFromCart={(itemId) => removeFromCart(itemId)}
+            />
+          )}
 
-          {totalPages > 1 && (
+          {!isLoading && totalPages > 1 && (
             <div className="catalog__pagination">
               <button
                 className="catalog__pagination-btn catalog__pagination-btn--arrow"

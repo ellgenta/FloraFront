@@ -110,11 +110,7 @@ export default function ProductCard({
         </div>
       </div>
 
-      {isRecentlyViewed && (
-        <div className="product-card__recent-overlay">
-          <span className="product-card__recent-text">Viewed just now</span>
-        </div>
-      )}
+
     </div>
   );
 }

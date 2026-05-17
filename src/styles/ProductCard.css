@@ -157,6 +157,7 @@
   filter: brightness(0.95);
 }
 
+/*
 .product-card--recently-viewed {
   box-shadow: 0 0 0 1px rgba(227, 181, 193, 0.45), 0 14px 34px rgba(231, 190, 205, 0.22);
 }
@@ -187,3 +188,4 @@
   text-align: center;
   text-shadow: 0 2px 10px rgba(87, 68, 74, 0.18);
 }
+  */

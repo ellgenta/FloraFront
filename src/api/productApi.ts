@@ -75,4 +75,15 @@ export const productApi = {
 
   delete: (id: number) =>
     http<void>(`/product/delete/${id}`, { method: "DELETE" }),
+
+  filter: async (categoryIds: number[], subCategoryIds: number[]) => {
+    const data = await http<BackendProduct[]>("/product/filter", {
+      method: "POST",
+      body: JSON.stringify({
+        categoryIds: categoryIds.length > 0 ? categoryIds : null,
+        subCategoryIds: subCategoryIds.length > 0 ? subCategoryIds : null,
+      }),
+    });
+    return data.map(mapBackendProductToProduct);
+  },
 };

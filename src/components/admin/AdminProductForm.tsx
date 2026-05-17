@@ -1,12 +1,13 @@
-import { useState } from "react";
-import type { Product, ProductUpdateRequest } from "../../types/product";
+import { useEffect, useState } from "react";
+import { categoryApi } from "../../api/categoryApi";
+import type { Category, Subcategory } from "../../types/category";
+import type { Product, ProductCreateRequest } from "../../types/product";
 
 type ProductFormState = {
   name: string;
-  category: string;
-  subcategory: string;
+  categoryId: string;
+  subCategoryId: string;
   price: string;
-  stock: string;
   image: string;
   description: string;
 };
@@ -14,7 +15,7 @@ type ProductFormState = {
 type AdminProductFormProps = {
   mode?: "create" | "edit";
   initialData?: Product;
-  onSubmit?: (product: ProductUpdateRequest) => void | Promise<void>;
+  onSubmit?: (product: ProductCreateRequest) => void | Promise<void>;
 };
 
 const AdminProductForm = ({
@@ -22,38 +23,53 @@ const AdminProductForm = ({
   initialData,
   onSubmit,
 }: AdminProductFormProps) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+
   const [formData, setFormData] = useState<ProductFormState>({
     name: initialData?.name || "",
-    category: initialData?.category || "plants",
-    subcategory: initialData?.subcategory || "",
+    categoryId: initialData?.category?.id ? String(initialData.category.id) : "",
+    subCategoryId: initialData?.subcategory?.id ? String(initialData.subcategory.id) : "",
     price: initialData?.price ? String(initialData.price) : "",
-    stock: initialData?.stock ? String(initialData.stock) : "0",
     image: initialData?.image || "",
     description: initialData?.description || "",
   });
 
+  useEffect(() => {
+    Promise.all([categoryApi.getAll(), categoryApi.getAllSubcategories()])
+      .then(([cats, subs]) => {
+        setCategories(cats);
+        setSubcategories(subs);
+        if (!formData.categoryId && cats.length > 0) {
+          setFormData((prev) => ({ ...prev, categoryId: String(cats[0].id) }));
+        }
+      })
+      .catch((err) => console.error("Load categories error:", err));
+  }, []);
+
+  const filteredSubcategories = subcategories.filter(
+    (sub) => sub.categoryId === Number(formData.categoryId)
+  );
+
   const handleChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "categoryId") {
+      setFormData((prev) => ({ ...prev, categoryId: value, subCategoryId: "" }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const preparedProduct: ProductUpdateRequest = {
+    const preparedProduct: ProductCreateRequest = {
       name: formData.name,
-      category: formData.category,
-      subcategory: formData.subcategory || undefined,
+      categoryId: Number(formData.categoryId),
+      subCategoryId: formData.subCategoryId ? Number(formData.subCategoryId) : undefined,
       price: Number(formData.price),
-      stock: Number(formData.stock),
       image: formData.image,
       description: formData.description,
     };
@@ -62,6 +78,9 @@ const AdminProductForm = ({
       await onSubmit(preparedProduct);
     }
   };
+
+  const selectedCategory = categories.find((c) => c.id === Number(formData.categoryId));
+  const selectedSubcategory = subcategories.find((s) => s.id === Number(formData.subCategoryId));
 
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
@@ -80,27 +99,22 @@ const AdminProductForm = ({
 
           <div className="admin-form-group">
             <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              <option value="plants">Plants</option>
-              <option value="pots">Pots</option>
-              <option value="fertilizers">Fertilizers</option>
-              <option value="tools">Garden Tools</option>
+            <select name="categoryId" value={formData.categoryId} onChange={handleChange}>
+              <option value="">— Select category —</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
             </select>
           </div>
 
           <div className="admin-form-group">
             <label>Subcategory</label>
-            <input
-              type="text"
-              name="subcategory"
-              placeholder="decorative-foliage"
-              value={formData.subcategory}
-              onChange={handleChange}
-            />
+            <select name="subCategoryId" value={formData.subCategoryId} onChange={handleChange}>
+              <option value="">— Select subcategory —</option>
+              {filteredSubcategories.map((sub) => (
+                <option key={sub.id} value={sub.id}>{sub.name}</option>
+              ))}
+            </select>
           </div>
 
           <div className="admin-form-row">
@@ -111,17 +125,6 @@ const AdminProductForm = ({
                 name="price"
                 placeholder="45.99"
                 value={formData.price}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="admin-form-group">
-              <label>Stock</label>
-              <input
-                type="number"
-                name="stock"
-                placeholder="12"
-                value={formData.stock}
                 onChange={handleChange}
               />
             </div>
@@ -155,21 +158,15 @@ const AdminProductForm = ({
 
         <div className="admin-product-preview">
           <p>Preview</p>
-
           {formData.image ? (
-            <img
-              src={formData.image}
-              alt={formData.name}
-              className="admin-preview-img"
-            />
+            <img src={formData.image} alt={formData.name} className="admin-preview-img" />
           ) : (
             <div className="admin-preview-empty">No image</div>
           )}
-
           <h3>{formData.name || "Product name"}</h3>
-          <span>{formData.category}</span>
+          <span>{selectedCategory?.name || "—"}</span>
+          {selectedSubcategory && <span> / {selectedSubcategory.name}</span>}
           <strong>${formData.price || 0}</strong>
-          <small>Stock: {formData.stock || 0}</small>
         </div>
       </div>
     </form>
