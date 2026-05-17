@@ -4,15 +4,16 @@ const AdminSidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.dispatchEvent(new Event("tokenChanged"));
     navigate("/login");
   };
 
   return (
     <aside className="admin-sidebar">
       <div>
-        <div className="admin-logo">
+        <div className="admin-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           <img src="/flower.png" alt="FloraShop" className="admin-logo-img" />
-
           <div>
             <h2>FloraShop</h2>
             <p>Admin Panel</p>

@@ -6,6 +6,7 @@ type BackendUser = {
   userName?: string | null;
   email?: string | null;
   gender?: number;
+  role?: number;
   defaultAddress?: {
     state: string;
     city: string;
@@ -24,8 +25,8 @@ const mapBackendUserToUser = (user: BackendUser): User => ({
   gender: user.gender ?? 0,
   defaultAddress: user.defaultAddress ?? null,
   defaultPaymentMethod: user.defaultPaymentMethod ?? null,
-  role: user.isActive === false ? "Inactive" : "User",
-  isActive: user.isActive,
+  role: user.role === 2 ? "Admin" : "User",
+  isActive: !!user.isActive,
 });
 
 export const userApi = {

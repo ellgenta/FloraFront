@@ -18,18 +18,14 @@ type AdminProductFormProps = {
   onSubmit?: (product: ProductCreateRequest) => void | Promise<void>;
 };
 
-const AdminProductForm = ({
-  mode = "create",
-  initialData,
-  onSubmit,
-}: AdminProductFormProps) => {
+const AdminProductForm = ({ mode = "create", initialData, onSubmit }: AdminProductFormProps) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
 
   const [formData, setFormData] = useState<ProductFormState>({
     name: initialData?.name || "",
-    categoryId: initialData?.category?.id ? String(initialData.category.id) : "",
-    subCategoryId: initialData?.subcategory?.id ? String(initialData.subcategory.id) : "",
+    categoryId: initialData?.category ? String(initialData.category.id) : "",
+    subCategoryId: initialData?.subcategory ? String(initialData.subcategory.id) : "",
     price: initialData?.price ? String(initialData.price) : "",
     image: initialData?.image || "",
     description: initialData?.description || "",
@@ -64,23 +60,17 @@ const AdminProductForm = ({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const preparedProduct: ProductCreateRequest = {
-      name: formData.name,
-      categoryId: Number(formData.categoryId),
-      subCategoryId: formData.subCategoryId ? Number(formData.subCategoryId) : undefined,
-      price: Number(formData.price),
-      image: formData.image,
-      description: formData.description,
-    };
-
     if (onSubmit) {
-      await onSubmit(preparedProduct);
+      await onSubmit({
+        name: formData.name,
+        categoryId: Number(formData.categoryId),
+        subCategoryId: formData.subCategoryId ? Number(formData.subCategoryId) : undefined,
+        price: Number(formData.price),
+        image: formData.image,
+        description: formData.description,
+      });
     }
   };
-
-  const selectedCategory = categories.find((c) => c.id === Number(formData.categoryId));
-  const selectedSubcategory = subcategories.find((s) => s.id === Number(formData.subCategoryId));
 
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
@@ -88,19 +78,13 @@ const AdminProductForm = ({
         <div className="admin-edit-fields">
           <div className="admin-form-group">
             <label>Product name</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Monstera Deliciosa"
-              value={formData.name}
-              onChange={handleChange}
-            />
+            <input type="text" name="name" placeholder="Monstera Deliciosa"
+              value={formData.name} onChange={handleChange} />
           </div>
 
           <div className="admin-form-group">
             <label>Category</label>
             <select name="categoryId" value={formData.categoryId} onChange={handleChange}>
-              <option value="">— Select category —</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
@@ -110,7 +94,7 @@ const AdminProductForm = ({
           <div className="admin-form-group">
             <label>Subcategory</label>
             <select name="subCategoryId" value={formData.subCategoryId} onChange={handleChange}>
-              <option value="">— Select subcategory —</option>
+              <option value="">— None —</option>
               {filteredSubcategories.map((sub) => (
                 <option key={sub.id} value={sub.id}>{sub.name}</option>
               ))}
@@ -120,35 +104,21 @@ const AdminProductForm = ({
           <div className="admin-form-row">
             <div className="admin-form-group">
               <label>Price</label>
-              <input
-                type="number"
-                name="price"
-                placeholder="45.99"
-                value={formData.price}
-                onChange={handleChange}
-              />
+              <input type="number" name="price" placeholder="45.99"
+                value={formData.price} onChange={handleChange} />
             </div>
           </div>
 
           <div className="admin-form-group">
             <label>Image URL</label>
-            <input
-              type="text"
-              name="image"
-              placeholder="/flower.png or https://..."
-              value={formData.image}
-              onChange={handleChange}
-            />
+            <input type="text" name="image" placeholder="/flower.png or https://..."
+              value={formData.image} onChange={handleChange} />
           </div>
 
           <div className="admin-form-group">
             <label>Description</label>
-            <textarea
-              name="description"
-              placeholder="Write product description..."
-              value={formData.description}
-              onChange={handleChange}
-            />
+            <textarea name="description" placeholder="Write product description..."
+              value={formData.description} onChange={handleChange} />
           </div>
 
           <button type="submit" className="admin-primary-btn">
@@ -164,8 +134,7 @@ const AdminProductForm = ({
             <div className="admin-preview-empty">No image</div>
           )}
           <h3>{formData.name || "Product name"}</h3>
-          <span>{selectedCategory?.name || "—"}</span>
-          {selectedSubcategory && <span> / {selectedSubcategory.name}</span>}
+          <span>{categories.find(c => c.id === Number(formData.categoryId))?.name || "—"}</span>
           <strong>${formData.price || 0}</strong>
         </div>
       </div>

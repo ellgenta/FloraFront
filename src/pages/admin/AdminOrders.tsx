@@ -1,10 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { orderApi } from "../../api/orderApi";
 import type { Order } from "../../types/order";
 
+const statusLabel = (status: number) => {
+  switch (status) {
+    case 0: return "Pending";
+    case 1: return "Confirmed";
+    case 2: return "Canceled";
+    case 3: return "Shipping";
+    case 4: return "Delivered";
+    default: return "Unknown";
+  }
+};
+
+const getStatusClassName = (status: number) => {
+  switch (status) {
+    case 1: return "admin-badge badge-processing";
+    case 2: return "admin-badge badge-cancelled";
+    case 3: return "admin-badge badge-processing";
+    case 4: return "admin-badge badge-done";
+    default: return "admin-badge badge-new";
+  }
+};
+
 const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -12,7 +32,6 @@ const AdminOrders = () => {
     try {
       setIsLoading(true);
       setError("");
-
       const data = await orderApi.getAll();
       setOrders(data);
     } catch (error) {
@@ -23,85 +42,26 @@ const AdminOrders = () => {
     }
   };
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
+  useEffect(() => { loadOrders(); }, []);
 
-  const filteredOrders = useMemo(() => {
-    const normalizedQuery = searchQuery.toLowerCase().trim();
+  if (isLoading) return (
+    <div className="admin-page">
+      <div className="admin-page-title"><h2>Orders</h2><p>Loading orders...</p></div>
+    </div>
+  );
 
-    if (!normalizedQuery) {
-      return orders;
-    }
-
-    return orders.filter((order) => {
-      return (
-        String(order.id).toLowerCase().includes(normalizedQuery) ||
-        order.customerName.toLowerCase().includes(normalizedQuery) ||
-        order.status.toLowerCase().includes(normalizedQuery)
-      );
-    });
-  }, [orders, searchQuery]);
-
-  const getStatusClassName = (status: string) => {
-    const normalizedStatus = status.toLowerCase();
-
-    if (normalizedStatus === "completed") {
-      return "admin-badge badge-done";
-    }
-
-    if (normalizedStatus === "cancelled") {
-      return "admin-badge badge-cancelled";
-    }
-
-    if (normalizedStatus === "processing") {
-      return "admin-badge badge-processing";
-    }
-
-    return "admin-badge badge-new";
-  };
-
-  if (isLoading) {
-    return (
-      <div className="admin-page">
-        <div className="admin-page-title">
-          <h2>Orders</h2>
-          <p>Loading orders...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="admin-page">
-        <div className="admin-page-title">
-          <h2>Orders</h2>
-          <p>{error}</p>
-        </div>
-
-        <button type="button" className="admin-primary-btn" onClick={loadOrders}>
-          Try Again
-        </button>
-      </div>
-    );
-  }
+  if (error) return (
+    <div className="admin-page">
+      <div className="admin-page-title"><h2>Orders</h2><p>{error}</p></div>
+      <button type="button" className="admin-primary-btn" onClick={loadOrders}>Try Again</button>
+    </div>
+  );
 
   return (
     <div className="admin-page">
       <div className="admin-page-title">
         <h2>Orders</h2>
         <p>Manage customer orders</p>
-      </div>
-
-      <div className="admin-toolbar">
-        <input
-          type="text"
-          placeholder="Search by order id, customer or status..."
-          className="admin-search-wide"
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-        />
       </div>
 
       <section className="admin-section">
@@ -116,33 +76,43 @@ const AdminOrders = () => {
               <th>Action</th>
             </tr>
           </thead>
-
           <tbody>
-            {filteredOrders.map((order) => (
+            {orders.map((order) => (
               <tr key={order.id}>
                 <td>#{order.id}</td>
                 <td>{order.customerName}</td>
                 <td>{order.date || "—"}</td>
-                <td>${order.total}</td>
+                <td>${order.totalPrice.toFixed(2)}</td>
                 <td>
                   <span className={getStatusClassName(order.status)}>
-                    {order.status}
+                    {statusLabel(order.status)}
                   </span>
                 </td>
                 <td>
-                  <button type="button" className="admin-table-btn">
-                    View
-                  </button>
+                  <select className="admin-table-select" value={order.status}
+                    onChange={async (e) => {
+                      const newStatus = Number(e.target.value);
+                      try {
+                        await orderApi.updateStatus(order.id, newStatus);
+                        setOrders((prev) =>
+                          prev.map((o) => o.id === order.id ? { ...o, status: newStatus } : o)
+                        );
+                      } catch (error) {
+                        console.error("Update status error:", error);
+                        alert("Failed to update status");
+                      }
+                    }}>
+                    <option value={0}>Pending</option>
+                    <option value={1}>Confirmed</option>
+                    <option value={2}>Canceled</option>
+                    <option value={3}>Shipping</option>
+                    <option value={4}>Delivered</option>
+                  </select>
                 </td>
               </tr>
             ))}
-
-            {filteredOrders.length === 0 && (
-              <tr>
-                <td colSpan={6} className="admin-empty-cell">
-                  No orders found
-                </td>
-              </tr>
+            {orders.length === 0 && (
+              <tr><td colSpan={6} className="admin-empty-cell">No orders found</td></tr>
             )}
           </tbody>
         </table>
