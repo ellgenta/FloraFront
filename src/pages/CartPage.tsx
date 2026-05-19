@@ -1,26 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Minus, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useCart } from "../contexts/CartContext";
 import { orderApi } from "../api/orderApi";
+import { productApi } from "../api/productApi";
 import type { AddressRequest } from "../types/order";
+import type { Product } from "../types/product";
 
 import "../styles/CartPage.css";
 
 function CartPage() {
   const navigate = useNavigate();
-
   const { cartItems, totalPrice, removeFromCart, updateQuantity, clearCart, getTotalItems } = useCart();
 
+  const [products, setProducts] = useState<Record<number, Product>>({});
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [deliveryAddress, setDeliveryAddress] = useState<AddressRequest>({
-    state: "",
-    city: "",
-    street: "",
-    house: "",
-    apartment: "",
+    state: "", city: "", street: "", house: "", apartment: "",
   });
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      const uniqueIds = [...new Set(cartItems.map((item) => item.productId))];
+      const results = await Promise.all(uniqueIds.map((id) => productApi.getById(id)));
+      const map: Record<number, Product> = {};
+      results.forEach((p) => { map[p.id] = p; });
+      setProducts(map);
+    };
+
+    if (cartItems.length > 0) loadProducts();
+  }, [cartItems]);
 
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -34,29 +44,18 @@ function CartPage() {
       const payload = JSON.parse(atob(token.split(".")[1]));
       const userId = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
       return userId ? Number(userId) : null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   };
 
   const isAddressValid = () =>
-    deliveryAddress.state.trim() &&
-    deliveryAddress.city.trim() &&
-    deliveryAddress.street.trim() &&
-    deliveryAddress.house.trim();
+    deliveryAddress.state.trim() && deliveryAddress.city.trim() &&
+    deliveryAddress.street.trim() && deliveryAddress.house.trim();
 
   const handleCheckout = async () => {
     const userId = getUserIdFromToken();
-    if (!userId) {
-      alert("Please log in before placing an order.");
-      navigate("/login");
-      return;
-    }
+    if (!userId) { alert("Please log in before placing an order."); navigate("/login"); return; }
     if (cartItems.length === 0) return;
-    if (!isAddressValid()) {
-      alert("Please fill in the delivery address.");
-      return;
-    }
+    if (!isAddressValid()) { alert("Please fill in the delivery address."); return; }
 
     try {
       setIsCheckoutLoading(true);
@@ -101,11 +100,7 @@ function CartPage() {
             <div className="cart-empty">
               <ShoppingBag size={48} strokeWidth={1.4} />
               <p>Your cart is empty</p>
-              <button
-                type="button"
-                className="cart-continue-shopping"
-                onClick={() => navigate("/catalog")}
-              >
+              <button type="button" className="cart-continue-shopping" onClick={() => navigate("/catalog")}>
                 Continue Shopping
               </button>
             </div>
@@ -114,43 +109,38 @@ function CartPage() {
           <div className="cart-layout">
             <section className="cart-layout__items">
               <div className="cart-items">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="cart-item">
-                    <img src="/flower.png" alt="product" className="cart-item-image" />
-
-                    <div className="cart-item-details">
-                      <h3 className="cart-item-name">Product #{item.productId}</h3>
-                      <div className="cart-item-price">${item.unitPrice.toFixed(2)}</div>
-                    </div>
-
-                    <div className="cart-item-controls">
-                      <div className="quantity-controls">
-                        <button
-                          type="button"
-                          className="quantity-btn"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span className="quantity">{item.quantity}</span>
-                        <button
-                          type="button"
-                          className="quantity-btn"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus size={14} />
+                {cartItems.map((item) => {
+                  const product = products[item.productId];
+                  return (
+                    <div key={item.id} className="cart-item">
+                      <img
+                        src={product?.image || "/flower.png"}
+                        alt={product?.name || "Product"}
+                        className="cart-item-image"
+                      />
+                      <div className="cart-item-details">
+                        <h3 className="cart-item-name">{product?.name || `Product #${item.productId}`}</h3>
+                        <div className="cart-item-price">${item.unitPrice.toFixed(2)}</div>
+                      </div>
+                      <div className="cart-item-controls">
+                        <div className="quantity-controls">
+                          <button type="button" className="quantity-btn"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                            <Minus size={14} />
+                          </button>
+                          <span className="quantity">{item.quantity}</span>
+                          <button type="button" className="quantity-btn"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                        <button type="button" className="remove-btn" onClick={() => removeFromCart(item.id)}>
+                          Remove
                         </button>
                       </div>
-                      <button
-                        type="button"
-                        className="remove-btn"
-                        onClick={() => removeFromCart(item.id)}
-                      >
-                        Remove
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
@@ -159,20 +149,15 @@ function CartPage() {
                 <h3 className="cart-summary-card__title">Delivery Address</h3>
                 <div className="cart-address-form">
                   <input type="text" name="state" placeholder="State"
-                    value={deliveryAddress.state} onChange={handleAddressChange}
-                    className="cart-address-input" />
+                    value={deliveryAddress.state} onChange={handleAddressChange} className="cart-address-input" />
                   <input type="text" name="city" placeholder="City"
-                    value={deliveryAddress.city} onChange={handleAddressChange}
-                    className="cart-address-input" />
+                    value={deliveryAddress.city} onChange={handleAddressChange} className="cart-address-input" />
                   <input type="text" name="street" placeholder="Street"
-                    value={deliveryAddress.street} onChange={handleAddressChange}
-                    className="cart-address-input" />
+                    value={deliveryAddress.street} onChange={handleAddressChange} className="cart-address-input" />
                   <input type="text" name="house" placeholder="House"
-                    value={deliveryAddress.house} onChange={handleAddressChange}
-                    className="cart-address-input" />
+                    value={deliveryAddress.house} onChange={handleAddressChange} className="cart-address-input" />
                   <input type="text" name="apartment" placeholder="Apartment (optional)"
-                    value={deliveryAddress.apartment || ""} onChange={handleAddressChange}
-                    className="cart-address-input" />
+                    value={deliveryAddress.apartment || ""} onChange={handleAddressChange} className="cart-address-input" />
                 </div>
               </div>
 
@@ -187,15 +172,8 @@ function CartPage() {
                   <span>${totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="cart-summary-card__actions">
-                  <button type="button" className="clear-cart-btn" onClick={clearCart}>
-                    Clear Cart
-                  </button>
-                  <button
-                    type="button"
-                    className="checkout-btn"
-                    onClick={handleCheckout}
-                    disabled={isCheckoutLoading}
-                  >
+                  <button type="button" className="clear-cart-btn" onClick={clearCart}>Clear Cart</button>
+                  <button type="button" className="checkout-btn" onClick={handleCheckout} disabled={isCheckoutLoading}>
                     {isCheckoutLoading ? "Creating order..." : "Proceed to Checkout"}
                   </button>
                 </div>
