@@ -59,3 +59,17 @@ export const getUserIdFromToken = (): number | null => {
 
   return Number.isFinite(userId) && userId > 0 ? userId : null;
 };
+
+export const isAdmin = (): boolean => {
+  const token = getToken();
+  if (!token) return false;
+
+  const payload = decodeJwtPayload(token);
+  if (!payload) return false;
+
+  const role =
+    payload.role ||
+    payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+  return role === "Admin";
+};

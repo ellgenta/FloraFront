@@ -24,27 +24,27 @@ const mapBackendProductToProduct = (product: BackendProduct): Product => ({
 
 export const productApi = {
   getAll: async () => {
-    const data = await http<BackendProduct[]>("/product/getAll");
+    const data = await http<BackendProduct[]>("/api/product/getAll");
     return data.map(mapBackendProductToProduct);
   },
 
   getById: async (id: number) => {
-    const data = await http<BackendProduct>(`/product/getById?id=${id}`);
+    const data = await http<BackendProduct>(`/api/product/getById?id=${id}`);
     return mapBackendProductToProduct(data);
   },
 
   getByCategory: async (categoryId: number) => {
-    const data = await http<BackendProduct[]>(`/product/category/${categoryId}`);
+    const data = await http<BackendProduct[]>(`/api/product/category/${categoryId}`);
     return data.map(mapBackendProductToProduct);
   },
 
   getBySubCategory: async (subCategoryId: number) => {
-    const data = await http<BackendProduct[]>(`/product/subcategory/${subCategoryId}`);
+    const data = await http<BackendProduct[]>(`/api/product/subcategory/${subCategoryId}`);
     return data.map(mapBackendProductToProduct);
   },
 
   create: async (product: ProductCreateRequest) => {
-    const data = await http<BackendProduct>("/product/create", {
+    const data = await http<BackendProduct>("/api/product/create", {
       method: "POST",
       body: JSON.stringify({
         name: product.name,
@@ -59,7 +59,7 @@ export const productApi = {
   },
 
   update: async (id: number, product: ProductUpdateRequest) => {
-    const data = await http<BackendProduct>(`/product/update/${id}`, {
+    const data = await http<BackendProduct>(`/api/product/update/${id}`, {
       method: "PUT",
       body: JSON.stringify({
         name: product.name,
@@ -74,10 +74,10 @@ export const productApi = {
   },
 
   delete: (id: number) =>
-    http<void>(`/product/delete/${id}`, { method: "DELETE" }),
+    http<void>(`/api/product/delete/${id}`, { method: "DELETE" }),
 
   filter: async (categoryIds: number[], subCategoryIds: number[]) => {
-    const data = await http<BackendProduct[]>("/product/filter", {
+    const data = await http<BackendProduct[]>("/api/product/filter", {
       method: "POST",
       body: JSON.stringify({
         categoryIds: categoryIds.length > 0 ? categoryIds : null,

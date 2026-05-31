@@ -35,12 +35,12 @@ const mapReviewToBackendDto = (review: ProductReviewCreateRequest): BackendProdu
 
 export const productReviewApi = {
   getByProductId: async (productId: number) => {
-    const data = await http<BackendProductReview[]>(`/review/product/${productId}`);
+    const data = await http<BackendProductReview[]>(`/api/review/product/${productId}`);
     return data.map(mapBackendReviewToProductReview);
   },
 
   create: async (review: ProductReviewCreateRequest) => {
-    const data = await http<BackendProductReview>("/review/product", {
+    const data = await http<BackendProductReview>("/api/review/product", {
       method: "POST",
       body: JSON.stringify(mapReviewToBackendDto(review)),
     });
@@ -48,6 +48,6 @@ export const productReviewApi = {
   },
 
   delete: (id: number) => {
-    return http<void>(`/review/product/${id}`, { method: "DELETE" });
+    return http<void>(`/api/review/product/${id}`, { method: "DELETE" });
   },
 };

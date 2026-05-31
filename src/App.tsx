@@ -24,6 +24,7 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 
 // Admin
+import AdminRoute from "./components/admin/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
@@ -36,15 +37,14 @@ import AdminReviews from "./pages/admin/AdminReviews";
 import ProfilePage from "./pages/ProfilePage";
 import EditProfilePage from "./pages/EditProfilePage";
 
+
 function SiteLayout() {
   const { getTotalItems } = useCart();
 
   return (
     <div className="app">
       <Header cartItemCount={getTotalItems()} />
-
       <Outlet />
-
       <Footer />
     </div>
   );
@@ -65,7 +65,6 @@ function AppContent() {
             </>
           }
         />
-
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/about" element={<About />} />
@@ -78,15 +77,17 @@ function AppContent() {
         <Route path="/profile/edit" element={<EditProfilePage />} />
       </Route>
 
-      {/* Админская панель */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="products" element={<AdminProducts />} />
-        <Route path="products/create" element={<AdminProductCreate />} />
-        <Route path="products/edit/:id" element={<AdminProductEdit />} />
-        <Route path="orders" element={<AdminOrders />} />
-        <Route path="users" element={<AdminUsers />} />
-        <Route path="reviews" element={<AdminReviews />} />
+      {/* Админская панель — только для админов */}
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/create" element={<AdminProductCreate />} />
+          <Route path="products/edit/:id" element={<AdminProductEdit />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="reviews" element={<AdminReviews />} />
+        </Route>
       </Route>
     </Routes>
   );

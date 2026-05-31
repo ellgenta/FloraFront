@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../api/auth";
+import { isAdmin } from "../utils/auth";
 import "../styles/AuthPage.css";
 
 function LoginPage() {
@@ -14,7 +15,13 @@ function LoginPage() {
       const response = await login({ login: loginValue, password });
       localStorage.setItem("token", response.token);
       window.dispatchEvent(new Event("tokenChanged"));
-      navigate("/");
+      
+      // Проверяем роль и редиректим
+      if (isAdmin()) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError("Invalid login or password");
     }

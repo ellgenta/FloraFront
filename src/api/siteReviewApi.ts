@@ -20,37 +20,29 @@ type BackendSiteReviewCreateDto = {
   mark: number;
 };
 
-const mapBackendSiteReviewToSiteReview = (
-  review: BackendSiteReview
-): SiteReview => {
-  return {
-    id: review.id,
-    userId: review.userId,
-    userName: review.user?.userName || `User #${review.userId}`,
-    text: review.content || "",
-    rating: review.mark ?? 0,
-    createdAt: review.createdAt,
-  };
-};
+const mapBackendSiteReviewToSiteReview = (review: BackendSiteReview): SiteReview => ({
+  id: review.id,
+  userId: review.userId,
+  userName: review.user?.userName || `User #${review.userId}`,
+  text: review.content || "",
+  rating: review.mark ?? 0,
+  createdAt: review.createdAt,
+});
 
-const mapSiteReviewToBackendDto = (
-  review: SiteReviewCreateRequest
-): BackendSiteReviewCreateDto => {
-  return {
-    userId: Number(review.userId),
-    content: review.text,
-    mark: review.rating,
-  };
-};
+const mapSiteReviewToBackendDto = (review: SiteReviewCreateRequest): BackendSiteReviewCreateDto => ({
+  userId: Number(review.userId),
+  content: review.text,
+  mark: review.rating,
+});
 
 export const siteReviewApi = {
   getAll: async () => {
-    const data = await http<BackendSiteReview[]>("/review/site/all");
+    const data = await http<BackendSiteReview[]>("/api/review/site/all");
     return data.map(mapBackendSiteReviewToSiteReview);
   },
 
   create: async (review: SiteReviewCreateRequest) => {
-    const data = await http<BackendSiteReview>("/review/site", {
+    const data = await http<BackendSiteReview>("/api/review/site", {
       method: "POST",
       body: JSON.stringify(mapSiteReviewToBackendDto(review)),
     });
@@ -58,7 +50,7 @@ export const siteReviewApi = {
   },
 
   delete: (id: string | number) => {
-    return http<void>(`/review/site?id=${id}`, {
+    return http<void>(`/api/review/site?id=${id}`, {
       method: "DELETE",
     });
   },

@@ -2,27 +2,27 @@ import { http } from "./http";
 import type { Cart, CartItemCreateRequest } from "../types/cart";
 
 export const cartApi = {
-  getCart: () => http<Cart>("/cart"),
+  getCart: () => http<Cart>("/api/cart"),
 
   addItem: (item: CartItemCreateRequest) =>
-    http<Cart>("/cart/items", {
+    http<Cart>("/api/cart/items", {
       method: "POST",
       body: JSON.stringify(item),
     }),
 
   updateItem: (itemId: number, item: CartItemCreateRequest) =>
-    http<Cart>(`/cart/items/${itemId}`, {
+    http<Cart>(`/api/cart/items/${itemId}`, {
       method: "PUT",
       body: JSON.stringify(item),
     }),
 
   deleteItem: (itemId: number) =>
-    http<void>(`/cart/items/${itemId}`, {
+    http<void>(`/api/cart/items/${itemId}`, {
       method: "DELETE",
     }),
 
   clearCart: () =>
-    http<void>("/cart", {
+    http<void>("/api/cart", {
       method: "DELETE",
     }),
 };

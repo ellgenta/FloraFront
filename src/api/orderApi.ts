@@ -35,22 +35,22 @@ const mapBackendOrderToOrder = (order: BackendOrder): Order => ({
 
 export const orderApi = {
   getAll: async () => {
-    const data = await http<BackendOrder[]>("/order/all");
+    const data = await http<BackendOrder[]>("/api/order/all");
     return data.map(mapBackendOrderToOrder);
   },
 
   getByUserId: async (userId: number) => {
-    const data = await http<BackendOrder[]>(`/order/${userId}/all`);
+    const data = await http<BackendOrder[]>(`/api/order/${userId}/all`);
     return data.map(mapBackendOrderToOrder);
   },
 
   getById: async (id: number) => {
-    const data = await http<BackendOrder>(`/order/${id}`);
+    const data = await http<BackendOrder>(`/api/order/${id}`);
     return mapBackendOrderToOrder(data);
   },
 
   create: async (order: CreateOrderRequest) => {
-    const data = await http<BackendOrder>("/order", {
+    const data = await http<BackendOrder>("/api/order", {
       method: "POST",
       body: JSON.stringify(order),
     });
@@ -58,7 +58,7 @@ export const orderApi = {
   },
 
   updateStatus: async (id: number, newStatus: number) => {
-    const data = await http<BackendOrder>(`/order/${id}/status?newStatus=${newStatus}`, {
+    const data = await http<BackendOrder>(`/api/order/${id}/status?newStatus=${newStatus}`, {
       method: "PUT",
     });
     return mapBackendOrderToOrder(data);

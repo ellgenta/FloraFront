@@ -31,17 +31,17 @@ const mapBackendUserToUser = (user: BackendUser): User => ({
 
 export const userApi = {
   getAll: async () => {
-    const data = await http<BackendUser[]>("/users/all");
+    const data = await http<BackendUser[]>("/api/users/all");
     return data.map(mapBackendUserToUser);
   },
 
   getById: async (id: number) => {
-    const data = await http<BackendUser>(`/users/${id}`);
+    const data = await http<BackendUser>(`/api/users/${id}`);
     return mapBackendUserToUser(data);
   },
 
   update: async (id: number, user: UserUpdateRequest) => {
-    const data = await http<BackendUser>(`/users/${id}`, {
+    const data = await http<BackendUser>(`/api/users/${id}`, {
       method: "PUT",
       body: JSON.stringify({
         userName: user.name,
@@ -55,5 +55,5 @@ export const userApi = {
     return mapBackendUserToUser(data);
   },
 
-  delete: (id: number) => http<void>(`/users/${id}`, { method: "DELETE" }),
+  delete: (id: number) => http<void>(`/api/users/${id}`, { method: "DELETE" }),
 };
