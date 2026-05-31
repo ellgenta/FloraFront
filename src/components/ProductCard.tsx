@@ -1,22 +1,37 @@
 import { useNavigate } from "react-router-dom";
+import type { KeyboardEvent, MouseEvent } from "react";
 import type { Product } from "../types/product";
 import { useFavorites } from "../contexts/FavoritesContext";
+import { getToken } from "../utils/auth";
 import "../styles/ProductCard.css";
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
-  onRemoveFromCart: () => void;
+  onRemoveFromCart: (productId: string | number) => void;
   isInCart: boolean;
   isRecentlyViewed?: boolean;
 }
 
-const getSubcategoryLabel = (subcategory?: { id: number; name: string; categoryId: number } | null) => {
-  if (!subcategory) return "";
-  return subcategory.name
+const formatLabel = (value: string) => {
+  return value
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+};
+
+const getSubcategoryLabel = (
+  subcategory?: string | { id?: number; name?: string; categoryId?: number } | null
+) => {
+  if (!subcategory) {
+    return "";
+  }
+
+  if (typeof subcategory === "string") {
+    return formatLabel(subcategory);
+  }
+
+  return subcategory.name ? formatLabel(subcategory.name) : "";
 };
 
 export default function ProductCard({
@@ -32,18 +47,58 @@ export default function ProductCard({
   const productId = String(product.id);
   const liked = isFavorite(productId);
 
-  const openProductPage = () => navigate(`/product/${product.id}`);
+  const openProductPage = () => {
+    navigate(`/product/${product.id}`);
+  };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       openProductPage();
     }
   };
 
+  const handleFavoriteClick = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+
+    if (!getToken()) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await toggleFavorite(product.id);
+    } catch (error) {
+      if (error instanceof Error && error.message === "AUTH_REQUIRED") {
+        navigate("/login");
+        return;
+      }
+
+      console.error("Toggle favorite error:", error);
+    }
+  };
+
+  const handleCartClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+
+    if (!getToken()) {
+      navigate("/login");
+      return;
+    }
+
+    if (isInCart) {
+      onRemoveFromCart(product.id);
+      return;
+    }
+
+    onAddToCart(product);
+  };
+
   return (
     <div
-      className={`product-card${isRecentlyViewed ? " product-card--recently-viewed" : ""}`}
+      className={`product-card${
+        isRecentlyViewed ? " product-card--recently-viewed" : ""
+      }`}
       onClick={openProductPage}
       role="button"
       tabIndex={0}
@@ -64,11 +119,10 @@ export default function ProductCard({
 
         <button
           type="button"
-          className={`product-card__like${liked ? " product-card__like--active" : ""}`}
-          onClick={(event) => {
-            event.stopPropagation();
-            toggleFavorite(productId);
-          }}
+          className={`product-card__like${
+            liked ? " product-card__like--active" : ""
+          }`}
+          onClick={handleFavoriteClick}
           aria-label={liked ? "Remove from favorites" : "Add to favorites"}
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -79,38 +133,31 @@ export default function ProductCard({
 
       <div className="product-card__content">
         <h3 className="product-card__name">{product.name}</h3>
+
         <p className="product-card__description">{product.description}</p>
 
         <div className="product-card__footer">
           <span className="product-card__price">${product.price}</span>
 
-          {isInCart ? (
-            <button
-              type="button"
-              className="product-card__btn product-card__btn--remove"
-              onClick={(event) => {
-                event.stopPropagation();
-                onRemoveFromCart();
-              }}
-            >
-              Remove from Cart
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="product-card__btn product-card__btn--add"
-              onClick={(event) => {
-                event.stopPropagation();
-                onAddToCart(product);
-              }}
-            >
-              Add to Cart
-            </button>
-          )}
+          <button
+            type="button"
+            className={`product-card__btn ${
+              isInCart
+                ? "product-card__btn--remove"
+                : "product-card__btn--add"
+            }`}
+            onClick={handleCartClick}
+          >
+            {isInCart ? "Remove from Cart" : "Add to Cart"}
+          </button>
         </div>
       </div>
 
-
+      {isRecentlyViewed && (
+        <div className="product-card__recent-overlay">
+          <span className="product-card__recent-text">Viewed just now</span>
+        </div>
+      )}
     </div>
   );
 }
