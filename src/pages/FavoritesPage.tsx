@@ -9,12 +9,7 @@ import "../styles/FavoritesPage.css";
 export default function FavoritesPage() {
   const navigate = useNavigate();
 
-  const {
-    favoriteProducts,
-    isLoading,
-    error,
-    loadFavorites,
-  } = useFavorites();
+  const { favoriteProducts, isLoading, error, loadFavorites } = useFavorites();
 
   const { cartItems, addToCart, removeFromCart } = useCart();
 
@@ -28,7 +23,21 @@ export default function FavoritesPage() {
   }, []);
 
   const isProductInCart = (productId: string | number) => {
-    return cartItems.some((item) => String(item.id) === String(productId));
+    return cartItems.some(
+      (item) => String(item.productId) === String(productId)
+    );
+  };
+
+  const handleRemoveFromCart = (productId: number) => {
+    const cartItem = cartItems.find(
+      (item) => String(item.productId) === String(productId)
+    );
+
+    if (!cartItem) {
+      return;
+    }
+
+    removeFromCart(cartItem.id);
   };
 
   if (isLoading) {
@@ -71,7 +80,7 @@ export default function FavoritesPage() {
             product={product}
             isInCart={isProductInCart(product.id)}
             onAddToCart={addToCart}
-            onRemoveFromCart={removeFromCart}
+            onRemoveFromCart={handleRemoveFromCart}
           />
         ))}
       </div>

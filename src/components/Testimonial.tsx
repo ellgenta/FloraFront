@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { TouchEvent } from "react";
-
 import { siteReviewApi } from "../api/siteReviewApi";
 import type { SiteReview, TestimonialItem } from "../types/siteReview";
-
 import "../styles/Testimonial.css";
 
 const normalizeSiteReview = (
@@ -15,7 +13,7 @@ const normalizeSiteReview = (
     name: review.userName || review.name || "Customer",
     city: review.city || review.location || "",
     text: review.text || review.message || review.comment || "",
-    rating: review.rating,
+    rating: review.rating ?? review.mark ?? 5,
   };
 };
 
@@ -35,8 +33,8 @@ function Testimonials() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const touchStartX = useRef<number>(0);
-  const touchStartY = useRef<number>(0);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
 
   const loadTestimonials = async () => {
     try {
@@ -103,12 +101,12 @@ function Testimonials() {
     return String(item.id) === String(testimonials[activeIndex]?.id);
   };
 
-  const handleTouchStart = (event: TouchEvent<HTMLElement>) => {
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     touchStartX.current = event.touches[0].clientX;
     touchStartY.current = event.touches[0].clientY;
   };
 
-  const handleTouchEnd = (event: TouchEvent<HTMLElement>) => {
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     const deltaX = touchStartX.current - event.changedTouches[0].clientX;
     const deltaY = Math.abs(
       touchStartY.current - event.changedTouches[0].clientY
@@ -129,33 +127,30 @@ function Testimonials() {
 
   return (
     <section className="testimonials">
-      <h2 className="testimonials__title">What our customers say</h2>
+      <div className="testimonials__header">
+        <h2>What our customers say</h2>
+      </div>
 
       {isLoading && (
-        <p className="testimonials__status">Loading customer reviews...</p>
+        <p className="testimonials__message">Loading customer reviews...</p>
       )}
 
       {!isLoading && error && (
-        <div className="testimonials__empty">
+        <div className="testimonials__message">
           <p>{error}</p>
-
-          <button
-            type="button"
-            className="testimonials__retry"
-            onClick={loadTestimonials}
-          >
+          <button type="button" onClick={loadTestimonials}>
             Try Again
           </button>
         </div>
       )}
 
       {!isLoading && !error && testimonials.length === 0 && (
-        <p className="testimonials__status">No customer reviews yet.</p>
+        <p className="testimonials__message">No customer reviews yet.</p>
       )}
 
       {!isLoading && !error && testimonials.length > 0 && (
         <div
-          className="testimonials__wrapper"
+          className="testimonials__slider"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -163,8 +158,7 @@ function Testimonials() {
             type="button"
             className="testimonials__arrow testimonials__arrow--left"
             onClick={prev}
-            aria-label="Previous"
-            disabled={testimonials.length <= 1}
+            aria-label="Previous testimonial"
           >
             ‹
           </button>
@@ -173,26 +167,22 @@ function Testimonials() {
             {visibleTestimonials.map((item, index) => (
               <article
                 key={item.id}
-                className={`testimonial-card ${
-                  isActiveCard(item, index) ? "testimonial-card--active" : ""
+                className={`testimonial-card${
+                  isActiveCard(item, index) ? " testimonial-card--active" : ""
                 }`}
               >
-                <div className="testimonial-card__header">
-                  <div className="testimonial-card__avatar">
-                    {item.name[0]?.toUpperCase()}
-                  </div>
-
-                  <div className="testimonial-card__info">
-                    <div className="testimonial-card__name">{item.name}</div>
-
-                    {item.city && (
-                      <div className="testimonial-card__city">{item.city}</div>
-                    )}
-                  </div>
+                <div className="testimonial-card__avatar">
+                  {item.name[0]?.toUpperCase()}
                 </div>
 
+                <div className="testimonial-card__name">{item.name}</div>
+
+                {item.city && (
+                  <div className="testimonial-card__city">{item.city}</div>
+                )}
+
                 {item.rating && (
-                  <div className="testimonial-card__rating">
+                  <div className="testimonial-card__stars">
                     {getStars(item.rating)}
                   </div>
                 )}
@@ -206,8 +196,7 @@ function Testimonials() {
             type="button"
             className="testimonials__arrow testimonials__arrow--right"
             onClick={next}
-            aria-label="Next"
-            disabled={testimonials.length <= 1}
+            aria-label="Next testimonial"
           >
             ›
           </button>

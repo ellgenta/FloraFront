@@ -50,30 +50,44 @@ type FavoriteCheckResponse = {
 
 const mapCategoryToFrontend = (
   category: BackendProduct["category"]
-): string => {
+): Product["category"] => {
   if (!category) {
-    return "";
+    return null;
   }
 
   if (typeof category === "string" || typeof category === "number") {
-    return String(category);
+    return {
+      id: 0,
+      name: String(category),
+    };
   }
 
-  return category.name !== undefined ? String(category.name) : "";
+  return {
+    id: category.id ?? 0,
+    name: category.name !== undefined ? String(category.name) : "",
+  };
 };
 
 const mapSubCategoryToFrontend = (
   subCategory: BackendProduct["subCategory"]
-): string => {
+): Product["subcategory"] => {
   if (!subCategory) {
-    return "";
+    return null;
   }
 
   if (typeof subCategory === "string") {
-    return subCategory;
+    return {
+      id: 0,
+      name: subCategory,
+      categoryId: 0,
+    };
   }
 
-  return subCategory.name || "";
+  return {
+    id: subCategory.id ?? 0,
+    name: subCategory.name || "",
+    categoryId: subCategory.categoryId ?? 0,
+  };
 };
 
 const mapDescriptionToFrontend = (
@@ -99,7 +113,6 @@ const mapBackendProductToProduct = (product: BackendProduct): Product => {
     price: product.price,
     image: product.images?.[0]?.url || "/flower.png",
     description: mapDescriptionToFrontend(product.description),
-    stock: undefined,
   };
 };
 
@@ -155,6 +168,5 @@ const favoriteApi = {
     });
   },
 };
-
 export { favoriteApi };
 export default favoriteApi;

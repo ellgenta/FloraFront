@@ -57,11 +57,6 @@ function LoginPage() {
           />
         </div>
 
-        <label className="auth-card__checkbox-row">
-          <input type="checkbox" className="auth-card__checkbox" />
-          <span className="auth-card__checkbox-label">Remember me</span>
-        </label>
-
         <button className="auth-card__submit" onClick={handleSubmit}>
           Sign In
         </button>

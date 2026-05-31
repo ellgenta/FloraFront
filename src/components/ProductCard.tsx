@@ -8,7 +8,7 @@ import "../styles/ProductCard.css";
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
-  onRemoveFromCart: (productId: string | number) => void;
+  onRemoveFromCart: (productId: number) => void;
   isInCart: boolean;
   isRecentlyViewed?: boolean;
 }
@@ -21,7 +21,7 @@ const formatLabel = (value: string) => {
 };
 
 const getSubcategoryLabel = (
-  subcategory?: string | { id?: number; name?: string; categoryId?: number } | null
+  subcategory?: Product["subcategory"] | string
 ) => {
   if (!subcategory) {
     return "";
@@ -87,7 +87,7 @@ export default function ProductCard({
     }
 
     if (isInCart) {
-      onRemoveFromCart(product.id);
+      onRemoveFromCart(Number(product.id));
       return;
     }
 
