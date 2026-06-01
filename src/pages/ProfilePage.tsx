@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../api/userApi";
 import { orderApi } from "../api/orderApi";
+import { siteReviewApi } from "../api/siteReviewApi";
 import type { User } from "../types/user";
 import type { Order } from "../types/order";
 import "../styles/ProfilePage.css";
@@ -48,10 +49,10 @@ const paymentLabel = (method?: number | null) => {
 
 const orderStatusLabel = (status: number) => {
   switch (status) {
-    case 0: return "New";
-    case 1: return "Processing";
-    case 2: return "Completed";
-    case 3: return "Cancelled";
+    case 0: return "Pending";
+    case 1: return "Confirmed";
+    case 2: return "Canceled";
+    case 3: return "Shipping";
     case 4: return "Delivered";
     default: return "Unknown";
   }
@@ -63,6 +64,11 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [reviewText, setReviewText] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [isReviewSubmitting, setIsReviewSubmitting] = useState(false);
 
   const role = getRoleFromToken();
   const isAdmin = role === "Admin";
@@ -90,6 +96,26 @@ export default function ProfilePage() {
     localStorage.removeItem("token");
     window.dispatchEvent(new Event("tokenChanged"));
     navigate("/");
+  };
+
+  const handleSubmitReview = async () => {
+    const userId = getUserIdFromToken();
+    if (!userId) return;
+    if (reviewRating === 0) { alert("Please select a rating"); return; }
+    if (!reviewText.trim()) { alert("Please write your review"); return; }
+
+    try {
+      setIsReviewSubmitting(true);
+      await siteReviewApi.create({ userId, text: reviewText.trim(), rating: reviewRating });
+      setReviewText("");
+      setReviewRating(0);
+      setIsReviewOpen(false);
+      alert("Review submitted successfully!");
+    } catch {
+      alert("Failed to submit review");
+    } finally {
+      setIsReviewSubmitting(false);
+    }
   };
 
   if (isLoading) return <div className="profile-page"><p>Loading...</p></div>;
@@ -175,6 +201,40 @@ export default function ProfilePage() {
             </div>
           </section>
         </div>
+
+        <section className="profile-review">
+          <div className="profile-review__header">
+            <h2 className="profile-orders__title">Leave a Site Review</h2>
+            <button className="profile-page__btn profile-page__btn--edit"
+              onClick={() => setIsReviewOpen((prev) => !prev)}>
+              {isReviewOpen ? "Cancel" : "Write Review"}
+            </button>
+          </div>
+
+          {isReviewOpen && (
+            <div className="profile-review__form">
+              <div className="profile-review__stars">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button key={star} type="button"
+                    className={`profile-review__star${star <= reviewRating ? " profile-review__star--active" : ""}`}
+                    onClick={() => setReviewRating(star)}>
+                    ★
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="profile-review__textarea"
+                placeholder="Share your experience with FloraShop..."
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+              />
+              <button className="profile-page__btn profile-page__btn--edit"
+                onClick={handleSubmitReview} disabled={isReviewSubmitting}>
+                {isReviewSubmitting ? "Submitting..." : "Submit Review"}
+              </button>
+            </div>
+          )}
+        </section>
 
         <section className="profile-orders">
           <h2 className="profile-orders__title">Order History</h2>

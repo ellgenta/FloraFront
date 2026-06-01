@@ -15,6 +15,21 @@
   align-items: start;
 }
 
+.catalog__main {
+  min-width: 0;
+}
+
+.catalog__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  color: #617260;
+  font-size: 18px;
+}
+
 .catalog__top-bar {
   display: flex;
   align-items: center;
@@ -67,27 +82,6 @@
   box-shadow: 0 0 0 3px rgba(122, 171, 132, 0.15);
 }
 
-.catalog__sort-select option:checked {
-  background-color: #eef8f1;
-  color: #2f4732;
-}
-
-@media (max-width: 768px) {
-  .catalog__inner {
-    grid-template-columns: 1fr;
-  }
-
-  .catalog__top-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .catalog__title {
-    padding-left: 0;
-  }
-}
-
 .catalog__pagination {
   display: flex;
   align-items: center;
@@ -121,7 +115,6 @@
   color: #fff;
 }
 
-/* активная кнопка при наведении — только тень, цвет не меняется */
 .catalog__pagination-btn--active:hover {
   background: #4f6552;
   border-color: #4f6552;
@@ -137,4 +130,20 @@
   opacity: 0.35;
   cursor: default;
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .catalog__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog__top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .catalog__title {
+    padding-left: 0;
+  }
 }

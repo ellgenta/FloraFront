@@ -4,26 +4,17 @@ import { siteReviewApi } from "../api/siteReviewApi";
 import type { SiteReview, TestimonialItem } from "../types/siteReview";
 import "../styles/Testimonial.css";
 
-const normalizeSiteReview = (
-  review: SiteReview,
-  index: number
-): TestimonialItem => {
-  return {
-    id: review.id ?? review.siteReviewId ?? index,
-    name: review.userName || review.name || "Customer",
-    city: review.city || review.location || "",
-    text: review.text || review.message || review.comment || "",
-    rating: review.rating ?? review.mark ?? 5,
-  };
-};
+const normalizeSiteReview = (review: SiteReview, index: number): TestimonialItem => ({
+  id: review.id ?? index,
+  name: review.userName || "Customer",
+  city: "",
+  text: review.text || "",
+  rating: review.rating ?? 5,
+});
 
 const getStars = (rating?: number) => {
-  if (!rating) {
-    return "";
-  }
-
+  if (!rating) return "";
   const safeRating = Math.max(1, Math.min(5, Math.round(rating)));
-
   return "★".repeat(safeRating) + "☆".repeat(5 - safeRating);
 };
 
@@ -40,14 +31,11 @@ function Testimonials() {
     try {
       setIsLoading(true);
       setError("");
-
       const data = await siteReviewApi.getAll();
-
-      const normalizedTestimonials = data
+      const normalized = data
         .map(normalizeSiteReview)
         .filter((review) => review.text.trim().length > 0);
-
-      setTestimonials(normalizedTestimonials);
+      setTestimonials(normalized);
       setActiveIndex(0);
     } catch (error) {
       console.error("Load site reviews error:", error);
@@ -57,47 +45,29 @@ function Testimonials() {
     }
   };
 
-  useEffect(() => {
-    loadTestimonials();
-  }, []);
+  useEffect(() => { loadTestimonials(); }, []);
 
   const prev = () => {
-    if (testimonials.length <= 1) {
-      return;
-    }
-
-    setActiveIndex(
-      (index) => (index - 1 + testimonials.length) % testimonials.length
-    );
+    if (testimonials.length <= 1) return;
+    setActiveIndex((i) => (i - 1 + testimonials.length) % testimonials.length);
   };
 
   const next = () => {
-    if (testimonials.length <= 1) {
-      return;
-    }
-
-    setActiveIndex((index) => (index + 1) % testimonials.length);
+    if (testimonials.length <= 1) return;
+    setActiveIndex((i) => (i + 1) % testimonials.length);
   };
 
   const visibleTestimonials = useMemo(() => {
-    if (testimonials.length <= 3) {
-      return testimonials;
-    }
-
+    if (testimonials.length <= 3) return testimonials;
     return [
-      testimonials[
-        (activeIndex - 1 + testimonials.length) % testimonials.length
-      ],
+      testimonials[(activeIndex - 1 + testimonials.length) % testimonials.length],
       testimonials[activeIndex],
       testimonials[(activeIndex + 1) % testimonials.length],
     ];
   }, [testimonials, activeIndex]);
 
   const isActiveCard = (item: TestimonialItem, index: number) => {
-    if (testimonials.length > 3) {
-      return index === 1;
-    }
-
+    if (testimonials.length > 3) return index === 1;
     return String(item.id) === String(testimonials[activeIndex]?.id);
   };
 
@@ -108,21 +78,10 @@ function Testimonials() {
 
   const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     const deltaX = touchStartX.current - event.changedTouches[0].clientX;
-    const deltaY = Math.abs(
-      touchStartY.current - event.changedTouches[0].clientY
-    );
-
-    if (deltaY > Math.abs(deltaX)) {
-      return;
-    }
-
-    if (deltaX > 50) {
-      next();
-    }
-
-    if (deltaX < -50) {
-      prev();
-    }
+    const deltaY = Math.abs(touchStartY.current - event.changedTouches[0].clientY);
+    if (deltaY > Math.abs(deltaX)) return;
+    if (deltaX > 50) next();
+    if (deltaX < -50) prev();
   };
 
   return (
@@ -131,16 +90,12 @@ function Testimonials() {
         <h2>What our customers say</h2>
       </div>
 
-      {isLoading && (
-        <p className="testimonials__message">Loading customer reviews...</p>
-      )}
+      {isLoading && <p className="testimonials__message">Loading customer reviews...</p>}
 
       {!isLoading && error && (
         <div className="testimonials__message">
           <p>{error}</p>
-          <button type="button" onClick={loadTestimonials}>
-            Try Again
-          </button>
+          <button type="button" onClick={loadTestimonials}>Try Again</button>
         </div>
       )}
 
@@ -154,12 +109,9 @@ function Testimonials() {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <button
-            type="button"
+          <button type="button"
             className="testimonials__arrow testimonials__arrow--left"
-            onClick={prev}
-            aria-label="Previous testimonial"
-          >
+            onClick={prev} aria-label="Previous testimonial">
             ‹
           </button>
 
@@ -167,37 +119,24 @@ function Testimonials() {
             {visibleTestimonials.map((item, index) => (
               <article
                 key={item.id}
-                className={`testimonial-card${
-                  isActiveCard(item, index) ? " testimonial-card--active" : ""
-                }`}
+                className={`testimonial-card${isActiveCard(item, index) ? " testimonial-card--active" : ""}`}
               >
                 <div className="testimonial-card__avatar">
                   {item.name[0]?.toUpperCase()}
                 </div>
-
                 <div className="testimonial-card__name">{item.name}</div>
-
-                {item.city && (
-                  <div className="testimonial-card__city">{item.city}</div>
-                )}
-
+                {item.city && <div className="testimonial-card__city">{item.city}</div>}
                 {item.rating && (
-                  <div className="testimonial-card__stars">
-                    {getStars(item.rating)}
-                  </div>
+                  <div className="testimonial-card__stars">{getStars(item.rating)}</div>
                 )}
-
                 <p className="testimonial-card__text">{item.text}</p>
               </article>
             ))}
           </div>
 
-          <button
-            type="button"
+          <button type="button"
             className="testimonials__arrow testimonials__arrow--right"
-            onClick={next}
-            aria-label="Next testimonial"
-          >
+            onClick={next} aria-label="Next testimonial">
             ›
           </button>
         </div>

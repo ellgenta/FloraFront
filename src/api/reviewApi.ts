@@ -40,7 +40,6 @@ export const reviewApi = {
         productName: undefined,
         rating: review.rating ?? 0,
         text: review.text || "",
-        createdAt: review.createdAt,
       })
     );
 
