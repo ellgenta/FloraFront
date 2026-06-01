@@ -13,10 +13,21 @@ function RegisterPage() {
 
  const handleSubmit = async () => {
   try {
-    const response = await register({ userName, email, password });
+    setError("");
+
+    const response = await register({
+      userName,
+      email,
+      password,
+    });
+
+    if (response.isSuccess === false) {
+      setError(response.message || "Registration failed.");
+      return;
+    }
 
     if (!response.token) {
-      setError(response.message || "Registration failed. Token was not received.");
+      setError("Registration succeeded, but token was not received.");
       return;
     }
 
@@ -28,6 +39,7 @@ function RegisterPage() {
     setError("Registration failed. Please try again.");
   }
 };
+
 
   return (
     <main className="auth-page">

@@ -31,6 +31,11 @@ const AdminSidebar = () => {
             <span>Products</span>
           </NavLink>
 
+          <NavLink to="/admin/catalog">
+            <img src="/catalog.png" alt="Catalog" className="admin-nav-icon" />
+            <span>Catalog</span>
+          </NavLink>
+
           <NavLink to="/admin/orders">
             <img src="/orders.png" alt="Orders" className="admin-nav-icon" />
             <span>Orders</span>

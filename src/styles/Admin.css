@@ -790,3 +790,47 @@
   background: #f1eeee;
   color: #6e6e6e;
 }
+
+.admin-catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+.admin-inline-form {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.admin-inline-form input,
+.admin-inline-form select {
+  min-width: 240px;
+  border: 1px solid #c5cec2;
+  border-radius: 999px;
+  padding: 14px 18px;
+  outline: none;
+  font-size: 15px;
+  background: #fbfdf9;
+  color: #2f4633;
+}
+
+.admin-inline-form input:focus,
+.admin-inline-form select:focus {
+  border-color: #2f4633;
+}
+
+@media (max-width: 900px) {
+  .admin-inline-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-inline-form input,
+  .admin-inline-form select,
+  .admin-inline-form button {
+    width: 100%;
+  }
+}

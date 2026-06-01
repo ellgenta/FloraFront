@@ -33,9 +33,12 @@ import AdminProductEdit from "./pages/admin/AdminProductEdit";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminReviews from "./pages/admin/AdminReviews";
+import AdminCatalog from "./pages/admin/AdminCatalog";
+
 
 import ProfilePage from "./pages/ProfilePage";
 import EditProfilePage from "./pages/EditProfilePage";
+import RequireAuth from "./components/RequireAuth";
 
 
 function SiteLayout() {
@@ -72,7 +75,14 @@ function AppContent() {
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/cart" element={<CartPage />} />
+        <Route
+               path="/cart"
+              element={
+              <RequireAuth>
+             <CartPage />
+             </RequireAuth>
+                      }
+         />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/edit" element={<EditProfilePage />} />
       </Route>
@@ -84,6 +94,7 @@ function AppContent() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="products/create" element={<AdminProductCreate />} />
           <Route path="products/edit/:id" element={<AdminProductEdit />} />
+          <Route path="/admin/catalog" element={<AdminCatalog />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="reviews" element={<AdminReviews />} />
