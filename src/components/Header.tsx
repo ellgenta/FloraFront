@@ -1,22 +1,50 @@
 import { Heart, User, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
+import { getToken } from "../utils/auth";
 import "../styles/Header.css";
 
 interface HeaderProps {
   cartItemCount: number;
 }
 
-const isLoggedIn = () => !!localStorage.getItem("token");
-
 function Header({ cartItemCount }: HeaderProps) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const isAuthorized = () => Boolean(getToken());
+
+  const handleSearch = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchQuery.trim()) {
       navigate("/catalog", { state: { searchQuery: searchQuery.trim() } });
     }
+  };
+
+  const handleProfileClick = () => {
+    if (isAuthorized()) {
+      navigate("/profile");
+      return;
+    }
+
+    navigate("/login");
+  };
+
+  const handleFavoritesClick = () => {
+    if (isAuthorized()) {
+      navigate("/favorites");
+      return;
+    }
+
+    navigate("/register", { state: { from: "/favorites" } });
+  };
+
+  const handleCartClick = () => {
+    if (isAuthorized()) {
+      navigate("/cart");
+      return;
+    }
+
+    navigate("/register", { state: { from: "/cart" } });
   };
 
   return (
@@ -30,6 +58,7 @@ function Header({ cartItemCount }: HeaderProps) {
             onClick={() => navigate("/")}
             style={{ cursor: "pointer" }}
           />
+
           <h1
             className="header__logo-text"
             onClick={() => navigate("/")}
@@ -40,9 +69,17 @@ function Header({ cartItemCount }: HeaderProps) {
         </div>
 
         <nav className="header__nav">
-          <Link to="/catalog" className="header__link">Catalog</Link>
-          <Link to="/about" className="header__link">About</Link>
-          <Link to="/delivery" className="header__link">Delivery</Link>
+          <Link to="/catalog" className="header__link">
+            Catalog
+          </Link>
+
+          <Link to="/about" className="header__link">
+            About
+          </Link>
+
+          <Link to="/delivery" className="header__link">
+            Delivery
+          </Link>
         </nav>
       </div>
 
@@ -60,7 +97,7 @@ function Header({ cartItemCount }: HeaderProps) {
           <button
             className="header__icon-button"
             aria-label="User profile"
-            onClick={() => navigate(isLoggedIn() ? "/profile" : "/login")}
+            onClick={handleProfileClick}
           >
             <User size={28} strokeWidth={1.8} />
           </button>
@@ -68,7 +105,7 @@ function Header({ cartItemCount }: HeaderProps) {
           <button
             className="header__icon-button"
             aria-label="Favorites"
-            onClick={() => navigate("/favorites")}
+            onClick={handleFavoritesClick}
           >
             <Heart size={28} strokeWidth={1.8} />
           </button>
@@ -76,10 +113,11 @@ function Header({ cartItemCount }: HeaderProps) {
           <button
             className="header__icon-button header__cart-button"
             aria-label="Shopping cart"
-            onClick={() => navigate("/cart")}
+            onClick={handleCartClick}
           >
             <ShoppingCart size={30} strokeWidth={1.8} />
-            {cartItemCount > 0 && (
+
+            {isAuthorized() && cartItemCount > 0 && (
               <span className="cart-badge">{cartItemCount}</span>
             )}
           </button>

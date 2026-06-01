@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../api/auth";
 import { isAdmin } from "../utils/auth";
@@ -6,26 +6,35 @@ import "../styles/AuthPage.css";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from || "/";
   const [loginValue, setLoginValue] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
-    try {
-      const response = await login({ login: loginValue, password });
-      localStorage.setItem("token", response.token);
-      window.dispatchEvent(new Event("tokenChanged"));
-      
-      // Проверяем роль и редиректим
-      if (isAdmin()) {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
-    } catch (err) {
-      setError("Invalid login or password");
+  try {
+    setError("");
+
+    const response = await login({ login: loginValue, password });
+
+    if (!response.token) {
+      setError(response.message || "Login failed. Token was not received.");
+      return;
     }
-  };
+
+    localStorage.setItem("token", response.token);
+    window.dispatchEvent(new Event("tokenChanged"));
+
+    if (isAdmin()) {
+      navigate("/admin");
+    } else {
+      navigate(from, { replace: true });
+    }
+  } catch (err) {
+    setError("Invalid login or password");
+  }
+};
 
   return (
     <main className="auth-page">

@@ -11,18 +11,23 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      const response = await register({ userName, email, password });
-      if (!response.isSuccess) {
-        setError(response.message);
-        return;
-      }
-      navigate("/login");
-    } catch (err) {
-      setError("Registration failed. Please try again.");
+ const handleSubmit = async () => {
+  try {
+    const response = await register({ userName, email, password });
+
+    if (!response.token) {
+      setError(response.message || "Registration failed. Token was not received.");
+      return;
     }
-  };
+
+    localStorage.setItem("token", response.token);
+    window.dispatchEvent(new Event("tokenChanged"));
+
+    navigate("/");
+  } catch (err) {
+    setError("Registration failed. Please try again.");
+  }
+};
 
   return (
     <main className="auth-page">
