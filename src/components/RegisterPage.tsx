@@ -90,13 +90,6 @@ function RegisterPage() {
           />
         </div>
 
-        <label className="auth-card__checkbox-row">
-          <input type="checkbox" className="auth-card__checkbox" />
-          <span className="auth-card__checkbox-label">
-            I'd like to receive news about discounts and special offers
-          </span>
-        </label>
-
         <button className="auth-card__submit" onClick={handleSubmit}>
           Create Account
         </button>
