@@ -1,6 +1,6 @@
 import { http } from "./http";
 import type { Favorite } from "../types/favorite";
-import type { Product } from "../types/product";
+import { ProductStatus, type Product } from "../types/product";
 
 type BackendProductDescription = {
   id?: number;
@@ -33,7 +33,7 @@ type BackendProduct = {
   subCategory?: BackendSubCategory | string | null;
   images?: BackendProductImage[] | null;
   price: number;
-  status?: number;
+  status?: ProductStatus;
 };
 
 type BackendFavorite = {
@@ -113,6 +113,7 @@ const mapBackendProductToProduct = (product: BackendProduct): Product => {
     price: product.price,
     image: product.images?.[0]?.url || "/flower.png",
     description: mapDescriptionToFrontend(product.description),
+    status: product.status ?? ProductStatus.Unknown,
   };
 };
 
@@ -168,5 +169,6 @@ const favoriteApi = {
     });
   },
 };
+
 export { favoriteApi };
 export default favoriteApi;

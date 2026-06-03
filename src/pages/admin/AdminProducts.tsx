@@ -1,7 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { productApi } from "../../api/productApi";
-import type { Product } from "../../types/product";
+import { ProductStatus, type Product } from "../../types/product";
+
+const getProductStatusLabel = (status?: ProductStatus) => {
+  switch (status) {
+    case ProductStatus.Active:
+      return "Active";
+    case ProductStatus.Inactive:
+      return "Inactive";
+    case ProductStatus.Discontinued:
+      return "Discontinued";
+    case ProductStatus.Sold:
+      return "Sold";
+    case ProductStatus.Unknown:
+    default:
+      return "Unknown";
+  }
+};
 
 const AdminProducts = () => {
   const [adminProducts, setAdminProducts] = useState<Product[]>([]);
@@ -12,6 +28,7 @@ const AdminProducts = () => {
     try {
       setIsLoading(true);
       setError("");
+
       const data = await productApi.getAll();
       setAdminProducts(data);
     } catch (error) {
@@ -22,31 +39,39 @@ const AdminProducts = () => {
     }
   };
 
-  useEffect(() => { loadProducts(); }, []);
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
-  const handleDeleteProduct = async (productId: number) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
-    try {
-      await productApi.delete(productId);
-      setAdminProducts((prev) => prev.filter((p) => p.id !== productId));
-    } catch (error) {
-      console.error("Delete product error:", error);
-      alert("Error while deleting product");
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="admin-page">
+        <div className="admin-page-title">
+          <h2>Products</h2>
+          <p>Loading products...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (isLoading) return (
-    <div className="admin-page">
-      <div className="admin-page-title"><h2>Products</h2><p>Loading products...</p></div>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="admin-page">
+        <div className="admin-page-title">
+          <h2>Products</h2>
+          <p>{error}</p>
+        </div>
 
-  if (error) return (
-    <div className="admin-page">
-      <div className="admin-page-title"><h2>Products</h2><p>{error}</p></div>
-      <button type="button" className="admin-primary-btn" onClick={loadProducts}>Try Again</button>
-    </div>
-  );
+        <button
+          type="button"
+          className="admin-primary-btn"
+          onClick={loadProducts}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-page">
@@ -55,7 +80,10 @@ const AdminProducts = () => {
           <h2>Products</h2>
           <p>Manage plants, flowers and accessories</p>
         </div>
-        <Link to="/admin/products/create" className="admin-primary-btn">+ Add Product</Link>
+
+        <Link to="/admin/products/create" className="admin-primary-btn">
+          + Add Product
+        </Link>
       </div>
 
       <section className="admin-section">
@@ -67,31 +95,47 @@ const AdminProducts = () => {
               <th>Category</th>
               <th>Subcategory</th>
               <th>Price</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {adminProducts.map((product) => (
               <tr key={product.id}>
                 <td>
-                  <img src={product.image || "/flower.png"} alt={product.name}
-                    className="admin-product-img" />
+                  <img
+                    src={product.image || "/flower.png"}
+                    alt={product.name}
+                    className="admin-product-img"
+                  />
                 </td>
+
                 <td>{product.name}</td>
                 <td>{product.category?.name ?? "—"}</td>
                 <td>{product.subcategory?.name ?? "—"}</td>
                 <td>${product.price}</td>
+                <td>{getProductStatusLabel(product.status)}</td>
+
                 <td>
                   <div className="admin-actions">
-                    <Link to={`/admin/products/edit/${product.id}`} className="admin-edit-btn">Edit</Link>
-                    <button type="button" className="admin-delete-btn"
-                      onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+                    <Link
+                      to={`/admin/products/edit/${product.id}`}
+                      className="admin-edit-btn"
+                    >
+                      Edit
+                    </Link>
                   </div>
                 </td>
               </tr>
             ))}
+
             {adminProducts.length === 0 && (
-              <tr><td colSpan={6} className="admin-empty-cell">No products found</td></tr>
+              <tr>
+                <td colSpan={7} className="admin-empty-cell">
+                  No products found
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
