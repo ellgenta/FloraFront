@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { register } from "../api/auth";
@@ -6,40 +6,74 @@ import "../styles/AuthPage.css";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = (location.state as { from?: string } | null)?.from || "/";
+
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("");
+
   const [error, setError] = useState("");
 
- const handleSubmit = async () => {
-  try {
-    setError("");
+  const handleSubmit = async () => {
+    try {
+      setError("");
 
-    const response = await register({
-      userName,
-      email,
-      password,
-    });
+      if (!userName.trim()) {
+        setError("Username is required.");
+        return;
+      }
 
-    if (response.isSuccess === false) {
-      setError(response.message || "Registration failed.");
-      return;
+      if (!email.trim()) {
+        setError("Email is required.");
+        return;
+      }
+
+      if (!password.trim()) {
+        setError("Password is required.");
+        return;
+      }
+
+      if (!dob) {
+        setError("Date of birth is required.");
+        return;
+      }
+
+      if (gender === "") {
+        setError("Gender is required.");
+        return;
+      }
+
+      const response = await register({
+        userName: userName.trim(),
+        email: email.trim(),
+        password,
+        dob,
+        gender: Number(gender),
+      });
+
+      if (response.isSuccess === false) {
+        setError(response.message || "Registration failed.");
+        return;
+      }
+
+      if (!response.token) {
+        setError("Registration succeeded, but token was not received.");
+        return;
+      }
+
+      localStorage.setItem("token", response.token);
+      window.dispatchEvent(new Event("tokenChanged"));
+
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError("Registration failed. Please try again.");
     }
-
-    if (!response.token) {
-      setError("Registration succeeded, but token was not received.");
-      return;
-    }
-
-    localStorage.setItem("token", response.token);
-    window.dispatchEvent(new Event("tokenChanged"));
-
-    navigate("/");
-  } catch (err) {
-    setError("Registration failed. Please try again.");
-  }
-};
-
+  };
 
   return (
     <main className="auth-page">
@@ -88,6 +122,30 @@ function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+        </div>
+
+        <div className="auth-card__field">
+          <label className="auth-card__label">Date of birth</label>
+          <input
+            className="auth-card__input"
+            type="date"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+          />
+        </div>
+
+        <div className="auth-card__field">
+          <label className="auth-card__label">Gender</label>
+          <select
+            className="auth-card__input"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
+            <option value="">Select gender</option>
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+            <option value="2">Other</option>
+          </select>
         </div>
 
         <button className="auth-card__submit" onClick={handleSubmit}>
