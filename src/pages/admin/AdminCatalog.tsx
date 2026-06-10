@@ -11,6 +11,7 @@ const AdminCatalog = () => {
   const [subCategories, setSubCategories] = useState<AdminSubCategory[]>([]);
 
   const [categoryName, setCategoryName] = useState("");
+  const [categoryImageUrl, setCategoryImageUrl] = useState("");
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(
     null
   );
@@ -57,6 +58,7 @@ const AdminCatalog = () => {
 
   const resetCategoryForm = () => {
     setCategoryName("");
+    setCategoryImageUrl("");
     setEditingCategoryId(null);
   };
 
@@ -70,9 +72,15 @@ const AdminCatalog = () => {
     event.preventDefault();
 
     const trimmedName = categoryName.trim();
+    const trimmedImageUrl = categoryImageUrl.trim();
 
     if (!trimmedName) {
       alert("Category name is required");
+      return;
+    }
+
+    if (!trimmedImageUrl) {
+      alert("Category image URL is required");
       return;
     }
 
@@ -80,7 +88,7 @@ const AdminCatalog = () => {
       if (editingCategoryId) {
         const updatedCategory = await adminCategoryApi.update(
           editingCategoryId,
-          { name: trimmedName }
+          { name: trimmedName, image: { url: trimmedImageUrl } }
         );
 
         setCategories((prev) =>
@@ -91,6 +99,7 @@ const AdminCatalog = () => {
       } else {
         const createdCategory = await adminCategoryApi.create({
           name: trimmedName,
+          image: { url: trimmedImageUrl },
         });
 
         setCategories((prev) => [...prev, createdCategory]);
@@ -106,6 +115,7 @@ const AdminCatalog = () => {
   const handleEditCategory = (category: AdminCategory) => {
     setEditingCategoryId(category.id);
     setCategoryName(category.name);
+    setCategoryImageUrl(category.image?.url ?? "");
   };
 
   const handleDeleteCategory = async (categoryId: number) => {
@@ -274,6 +284,13 @@ const AdminCatalog = () => {
               placeholder="Category name"
             />
 
+            <input
+              type="text"
+              value={categoryImageUrl}
+              onChange={(event) => setCategoryImageUrl(event.target.value)}
+              placeholder="Image URL"
+            />
+
             <button type="submit" className="admin-primary-btn">
               {editingCategoryId ? "Save Category" : "Add Category"}
             </button>
@@ -293,6 +310,7 @@ const AdminCatalog = () => {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Image</th>
                 <th>Category Name</th>
                 <th>Subcategories</th>
                 <th>Actions</th>
@@ -308,6 +326,17 @@ const AdminCatalog = () => {
                 return (
                   <tr key={category.id}>
                     <td>{category.id}</td>
+                    <td>
+                      {category.image?.url ? (
+                        <img
+                          src={category.image.url}
+                          alt={category.name}
+                          style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4 }}
+                        />
+                      ) : (
+                        "—"
+                      )}
+                    </td>
                     <td>{category.name}</td>
                     <td>{count}</td>
                     <td>
@@ -335,7 +364,7 @@ const AdminCatalog = () => {
 
               {categories.length === 0 && (
                 <tr>
-                  <td colSpan={4}>No categories found</td>
+                  <td colSpan={5}>No categories found</td>
                 </tr>
               )}
             </tbody>
